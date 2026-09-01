@@ -49,9 +49,9 @@ const SettingSchema = new Schema<ISetting>(
       type: String, 
       default: 'Thoughtfully chosen for moms & little ones • Islandwide Delivery Available' 
     },
-    whatsappNumber: { type: String, default: '+94771234567' },
+    whatsappNumber: { type: String, default: '+94 74 022 5855' },
     contactEmail: { type: String, default: 'care@butterflycare.lk' },
-    contactPhone: { type: String, default: '+94 11 234 5678' },
+    contactPhone: { type: String, default: '+94 74 022 5855' },
     address: { type: String, default: 'No. 42, Lotus Avenue, Colombo 07, Sri Lanka' },
     currency: { type: String, default: 'LKR' },
     currencySymbol: { type: String, default: 'Rs.' },
@@ -71,14 +71,14 @@ const SettingSchema = new Schema<ISetting>(
       accountNumber: { type: String, default: '1000 4589 3210' },
       instructions: { 
         type: String, 
-        default: 'Please deposit the order total to the account above and WhatsApp the receipt with your Order Number to +94771234567.' 
+        default: 'Please deposit the order total to the account above and WhatsApp the receipt with your Order Number to +94 74 022 5855.' 
       }
     },
     socialLinks: {
       instagram: { type: String, default: 'https://instagram.com/butterflycare' },
       facebook: { type: String, default: 'https://facebook.com/butterflycare' },
       tiktok: { type: String, default: 'https://tiktok.com/@butterflycare' },
-      whatsapp: { type: String, default: 'https://wa.me/94771234567' }
+      whatsapp: { type: String, default: 'https://wa.me/94740225855' }
     },
     stats: {
       happyCustomers: { type: Number, default: 1250 },

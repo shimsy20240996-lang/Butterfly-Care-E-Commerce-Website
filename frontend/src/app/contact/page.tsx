@@ -26,7 +26,7 @@ export default function ContactPage() {
     showToast('Thank you for reaching out! Our team will reply shortly.');
   };
 
-  const whatsappNumber = settings.whatsappNumber || '+94771234567';
+  const whatsappNumber = settings.whatsappNumber || '+94 74 022 5855';
   const whatsappUrl = generateWhatsAppLink(
     whatsappNumber,
     'Hello Butterfly Care! I would like some assistance with baby and mom care products.'

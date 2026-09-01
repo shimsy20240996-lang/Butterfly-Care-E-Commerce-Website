@@ -103,7 +103,7 @@ export const Footer: React.FC = () => {
                 <Facebook className="w-4 h-4" />
               </a>
               <a
-                href={settings.socialLinks?.whatsapp || 'https://wa.me/94771234567'}
+                href={settings.socialLinks?.whatsapp || 'https://wa.me/94740225855'}
                 target="_blank"
                 rel="noreferrer"
                 className="w-8 h-8 rounded-full bg-butterfly-soft hover:bg-[#25D366] hover:text-white flex items-center justify-center text-butterfly-text transition-colors"

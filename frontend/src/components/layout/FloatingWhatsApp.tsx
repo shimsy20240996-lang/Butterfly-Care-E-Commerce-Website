@@ -16,7 +16,7 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({
 }) => {
   const { settings } = useSettingsStore();
 
-  const phone = settings.whatsappNumber || '+94771234567';
+  const phone = settings.whatsappNumber || '+94 74 022 5855';
   const message =
     customMessage ||
     'Hello Butterfly Care! I would love some assistance with baby and mom care products.';

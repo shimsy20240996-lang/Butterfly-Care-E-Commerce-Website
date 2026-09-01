@@ -139,7 +139,7 @@ export default function ProductDetailPage() {
   };
 
   // WhatsApp Inquiry link
-  const whatsappNumber = settings.whatsappNumber || '+94771234567';
+  const whatsappNumber = settings.whatsappNumber || '+94 74 022 5855';
   const whatsappText = `Hello, I'm interested in ${product.name} (SKU: ${product.sku}). Is this product available?`;
   const whatsappUrl = generateWhatsAppLink(whatsappNumber, whatsappText);
 
