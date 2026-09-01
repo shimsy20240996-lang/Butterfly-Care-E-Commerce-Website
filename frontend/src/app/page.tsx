@@ -10,7 +10,6 @@ import { MomCareSpotlight } from '@/components/home/MomCareSpotlight';
 import { WhyChooseUs } from '@/components/home/WhyChooseUs';
 import { TrustStats } from '@/components/home/TrustStats';
 import { ReviewsCarousel } from '@/components/home/ReviewsCarousel';
-import { InstagramGrid } from '@/components/home/InstagramGrid';
 import { Newsletter } from '@/components/home/Newsletter';
 import { Product, Category } from '@/types';
 import { api } from '@/lib/api';
@@ -77,10 +76,7 @@ export default function HomePage() {
       {/* 9. Verified Customer Reviews Carousel */}
       <ReviewsCarousel />
 
-      {/* 10. Instagram Social Moments Grid */}
-      <InstagramGrid />
-
-      {/* 11. Soft Newsletter Subscription */}
+      {/* 10. Soft Newsletter Subscription */}
       <Newsletter />
     </div>
   );

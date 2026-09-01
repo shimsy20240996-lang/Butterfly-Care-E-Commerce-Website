@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Logo } from '@/components/ui/Logo';
 import { useSettingsStore } from '@/context/settingsStore';
-import { Instagram, Facebook, MessageCircle, Phone, Mail, MapPin, Heart, ShieldCheck, Truck, RefreshCw } from 'lucide-react';
+import { Facebook, MessageCircle, Phone, Mail, MapPin, Heart, ShieldCheck, Truck, RefreshCw } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const { settings } = useSettingsStore();
@@ -84,15 +84,6 @@ export const Footer: React.FC = () => {
 
             {/* Social Icons */}
             <div className="flex items-center gap-3 pt-3">
-              <a
-                href={settings.socialLinks?.instagram || 'https://instagram.com'}
-                target="_blank"
-                rel="noreferrer"
-                className="w-8 h-8 rounded-full bg-butterfly-soft hover:bg-butterfly-primary hover:text-white flex items-center justify-center text-butterfly-text transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-4 h-4" />
-              </a>
               <a
                 href={settings.socialLinks?.facebook || 'https://facebook.com'}
                 target="_blank"
