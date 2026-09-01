@@ -12,19 +12,19 @@ interface CategoryGridProps {
 
 export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
   return (
-    <section className="py-16 md:py-24 bg-[#F8F3EF]">
+    <section className="py-16 md:py-24 bg-[#FFFDF9]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16 space-y-3">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-butterfly-primary bg-butterfly-soft px-3.5 py-1 rounded-full">
-            <Sparkles className="w-3.5 h-3.5" />
-            Curated Categories
+        <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16 space-y-2.5">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#3F4650] bg-white border border-[#E9E9E9] px-3.5 py-1 rounded-full shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-[#E8A6B8]" />
+            <span>Curated Collections</span>
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-butterfly-text">
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#3F4650]">
             Everything They Need, All in One Place
           </h2>
-          <p className="text-xs sm:text-sm text-butterfly-textMuted leading-relaxed">
-            Thoughtfully selected essentials for every stage of motherhood, from gentle newborn skincare to postpartum care.
+          <p className="text-sm text-[#747A82] leading-relaxed">
+            Thoughtfully selected essentials for every stage of motherhood, from gentle newborn skincare to postpartum wellness.
           </p>
         </div>
 
@@ -33,11 +33,11 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
           {categories.slice(0, 8).map((cat) => (
             <Link
               key={cat._id}
-              href={`/shop?category=${cat.slug}`}
-              className="group relative rounded-3xl overflow-hidden bg-white border border-butterfly-border hover:border-butterfly-accent transition-all duration-500 hover:shadow-card flex flex-col"
+              href={`/products?category=${cat.slug}`}
+              className="group relative rounded-3xl overflow-hidden bg-white border border-[#E9E9E9] hover:border-[#3F4650]/30 transition-all duration-500 hover:shadow-card flex flex-col"
             >
               {/* Category Image */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-butterfly-soft">
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#FFFDF9]">
                 <Image
                   src={cat.image}
                   alt={cat.name}
@@ -48,7 +48,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-60 group-hover:opacity-75 transition-opacity" />
 
                 {/* Tag on Image */}
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[10px] font-semibold text-butterfly-text shadow-sm">
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[10px] font-semibold text-[#3F4650] shadow-xs">
                   {cat.itemCount || 'Curated'} Items
                 </div>
               </div>
@@ -56,15 +56,15 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
               {/* Card Body */}
               <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between bg-white">
                 <div>
-                  <h3 className="font-serif text-base sm:text-lg font-semibold text-butterfly-text group-hover:text-butterfly-primary transition-colors">
+                  <h3 className="font-serif text-base sm:text-lg font-bold text-[#3F4650] group-hover:text-[#5BA7D1] transition-colors">
                     {cat.name}
                   </h3>
-                  <p className="text-xs text-butterfly-textMuted line-clamp-2 mt-1.5 leading-relaxed">
+                  <p className="text-xs text-[#747A82] line-clamp-2 mt-1.5 leading-relaxed">
                     {cat.description}
                   </p>
                 </div>
 
-                <div className="pt-4 mt-3 border-t border-butterfly-border/50 flex items-center justify-between text-xs font-bold tracking-wider uppercase text-butterfly-primary group-hover:translate-x-1 transition-transform">
+                <div className="pt-4 mt-3 border-t border-[#E9E9E9] flex items-center justify-between text-xs font-bold tracking-wider uppercase text-[#3F4650] group-hover:translate-x-1 transition-transform">
                   <span>View Collection</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </div>

@@ -55,6 +55,8 @@ export interface InMemoryProduct {
   category: string; // category id
   categorySlug?: string;
   categoryName?: string;
+  subcategory?: string;
+  gender: 'boy' | 'girl' | 'unisex' | 'mom';
   images: string[];
   stock: number;
   sku: string;
@@ -69,6 +71,7 @@ export interface InMemoryProduct {
   featured: boolean;
   bestSeller: boolean;
   newArrival: boolean;
+  sale?: boolean;
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -265,6 +268,8 @@ class StoreService {
         category: catId,
         categorySlug: p.categorySlug,
         categoryName: catName,
+        subcategory: (p as any).subcategory || '',
+        gender: (p as any).gender || (p.categorySlug === 'mom-care' ? 'mom' : 'unisex'),
         images: p.images,
         stock: p.stock,
         sku: p.sku,
@@ -279,6 +284,7 @@ class StoreService {
         featured: p.featured,
         bestSeller: p.bestSeller,
         newArrival: p.newArrival,
+        sale: Boolean((p as any).sale || (p.discountPrice && p.discountPrice < p.price)),
         active: p.active,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()

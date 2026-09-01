@@ -9,6 +9,8 @@ export interface IProduct extends Document {
   discountPrice?: number;
   category: mongoose.Types.ObjectId | string;
   categoryName?: string;
+  subcategory?: string;
+  gender: 'boy' | 'girl' | 'unisex' | 'mom';
   images: string[];
   stock: number;
   sku: string;
@@ -23,6 +25,7 @@ export interface IProduct extends Document {
   featured: boolean;
   bestSeller: boolean;
   newArrival: boolean;
+  sale: boolean;
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -38,6 +41,13 @@ const ProductSchema = new Schema<IProduct>(
     discountPrice: { type: Number, min: 0, default: undefined },
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true, index: true },
     categoryName: { type: String, default: '' },
+    subcategory: { type: String, default: '' },
+    gender: { 
+      type: String, 
+      enum: ['boy', 'girl', 'unisex', 'mom'], 
+      default: 'unisex',
+      index: true 
+    },
     images: [{ type: String, required: true }],
     stock: { type: Number, required: true, min: 0, default: 10 },
     sku: { type: String, required: true, unique: true, uppercase: true, trim: true },
@@ -52,6 +62,7 @@ const ProductSchema = new Schema<IProduct>(
     featured: { type: Boolean, default: false },
     bestSeller: { type: Boolean, default: false },
     newArrival: { type: Boolean, default: false },
+    sale: { type: Boolean, default: false },
     active: { type: Boolean, default: true }
   },
   { timestamps: true }

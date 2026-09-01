@@ -9,6 +9,8 @@ export interface Product {
   category: string;
   categorySlug?: string;
   categoryName?: string;
+  subcategory?: string;
+  gender?: 'boy' | 'girl' | 'unisex' | 'mom';
   images: string[];
   stock: number;
   sku: string;
@@ -23,6 +25,7 @@ export interface Product {
   featured: boolean;
   bestSeller: boolean;
   newArrival: boolean;
+  sale?: boolean;
   active: boolean;
   createdAt: string;
   updatedAt: string;

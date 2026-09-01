@@ -71,6 +71,25 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
       filtered = filtered.filter(p => p.stock > 0);
     }
 
+    // Gender filter (boy, girl, unisex, mom)
+    const gender = req.query.gender as string;
+    if (gender && gender !== 'all') {
+      if (gender === 'boy') {
+        filtered = filtered.filter(p => p.gender === 'boy' || p.gender === 'unisex');
+      } else if (gender === 'girl') {
+        filtered = filtered.filter(p => p.gender === 'girl' || p.gender === 'unisex');
+      } else if (gender === 'mom') {
+        filtered = filtered.filter(p => p.gender === 'mom' || p.categorySlug === 'mom-care');
+      } else {
+        filtered = filtered.filter(p => p.gender === gender);
+      }
+    }
+
+    // Sale filter
+    if (req.query.sale === 'true') {
+      filtered = filtered.filter(p => p.sale || (p.discountPrice && p.discountPrice < p.price));
+    }
+
     // Featured / Best Seller / New Arrival quick filters
     if (req.query.featured === 'true') {
       filtered = filtered.filter(p => p.featured);
@@ -195,6 +214,9 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
       sku,
       brand,
       ageGroup,
+      gender,
+      subcategory,
+      sale,
       sizes,
       colors,
       materials,
@@ -232,6 +254,8 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
       category: catId,
       categorySlug: catSlug,
       categoryName: catName,
+      subcategory: subcategory || '',
+      gender: (['boy', 'girl', 'unisex', 'mom'].includes(gender) ? gender : 'unisex'),
       images: Array.isArray(images) && images.length > 0 ? images : ['https://images.unsplash.com/photo-1555252333-9f8e92e65df9?q=80&w=1000&auto=format&fit=crop'],
       stock: stock !== undefined ? Number(stock) : 10,
       sku: (sku || `BC-${Date.now().toString().slice(-6)}`).toUpperCase().trim(),
@@ -246,6 +270,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
       featured: Boolean(featured),
       bestSeller: Boolean(bestSeller),
       newArrival: Boolean(newArrival),
+      sale: Boolean(sale),
       active: active !== undefined ? Boolean(active) : true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -305,6 +330,9 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     if (updateData.sku !== undefined) current.sku = updateData.sku.toUpperCase();
     if (updateData.brand !== undefined) current.brand = updateData.brand;
     if (updateData.ageGroup !== undefined) current.ageGroup = updateData.ageGroup;
+    if (updateData.gender !== undefined) current.gender = updateData.gender;
+    if (updateData.subcategory !== undefined) current.subcategory = updateData.subcategory;
+    if (updateData.sale !== undefined) current.sale = Boolean(updateData.sale);
     if (updateData.materials !== undefined) current.materials = updateData.materials;
     if (updateData.careInstructions !== undefined) current.careInstructions = updateData.careInstructions;
     if (updateData.images !== undefined) current.images = updateData.images;

@@ -29,27 +29,27 @@ export const BestSellers: React.FC<BestSellersProps> = ({ products }) => {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-[#FAF6F3] border-y border-butterfly-border/60">
+    <section className="py-16 md:py-24 bg-[#FFFDF9] border-t border-[#E9E9E9]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header with Carousel Navigation */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-butterfly-primary bg-butterfly-soft px-3.5 py-1 rounded-full mb-2">
-              <Heart className="w-3.5 h-3.5 fill-current" />
-              Customer Favorites
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#3F4650] bg-white border border-[#E9E9E9] px-3.5 py-1 rounded-full mb-2 shadow-xs">
+              <Heart className="w-3.5 h-3.5 text-[#E8A6B8] fill-current" />
+              <span>Customer Favorites</span>
             </div>
-            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-butterfly-text">
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#3F4650]">
               Loved by Moms
             </h2>
-            <p className="text-xs sm:text-sm text-butterfly-textMuted mt-1">
+            <p className="text-sm text-[#747A82] mt-1">
               Our highest-rated essentials tested, trusted, and recommended by Sri Lankan families.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <Link
-              href="/shop?filter=bestSeller"
-              className="hidden md:inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-butterfly-primary hover:text-butterfly-primaryHover mr-4"
+              href="/products?tab=bestSeller"
+              className="hidden md:inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#3F4650] hover:text-[#5BA7D1] mr-4"
             >
               <span>View All Best Sellers</span>
               <ArrowRight className="w-4 h-4" />
@@ -57,14 +57,14 @@ export const BestSellers: React.FC<BestSellersProps> = ({ products }) => {
 
             <button
               onClick={scrollLeft}
-              className="w-10 h-10 rounded-full bg-white hover:bg-butterfly-soft text-butterfly-text border border-butterfly-border flex items-center justify-center transition-all shadow-sm hover:scale-105"
+              className="w-10 h-10 rounded-full bg-white hover:bg-[#F3FAFE] text-[#3F4650] border border-[#E9E9E9] flex items-center justify-center transition-all shadow-xs hover:scale-105"
               aria-label="Scroll left"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={scrollRight}
-              className="w-10 h-10 rounded-full bg-white hover:bg-butterfly-soft text-butterfly-text border border-butterfly-border flex items-center justify-center transition-all shadow-sm hover:scale-105"
+              className="w-10 h-10 rounded-full bg-white hover:bg-[#F3FAFE] text-[#3F4650] border border-[#E9E9E9] flex items-center justify-center transition-all shadow-xs hover:scale-105"
               aria-label="Scroll right"
             >
               <ChevronRight className="w-5 h-5" />

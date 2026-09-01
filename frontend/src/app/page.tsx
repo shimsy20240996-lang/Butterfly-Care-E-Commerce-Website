@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { HeroCarousel } from '@/components/home/HeroCarousel';
 import { CategoryGrid } from '@/components/home/CategoryGrid';
-import { EditorialFeature } from '@/components/home/EditorialFeature';
+import { BoyGirlCollection } from '@/components/home/BoyGirlCollection';
 import { NewArrivals } from '@/components/home/NewArrivals';
 import { BestSellers } from '@/components/home/BestSellers';
 import { MomCareSpotlight } from '@/components/home/MomCareSpotlight';
@@ -23,7 +23,7 @@ export default function HomePage() {
     const fetchData = async () => {
       try {
         const [prodData, catData] = await Promise.all([
-          api.get<{ products: Product[] }>('/products', { limit: 30 }),
+          api.get<{ products: Product[] }>('/products', { limit: 40 }),
           api.get<{ categories: Category[] }>('/categories')
         ]);
 
@@ -44,30 +44,30 @@ export default function HomePage() {
   }, []);
 
   const momProducts = products.filter(
-    (p) => p.categorySlug === 'mom-care' || p.categoryName === 'Mom Care'
+    (p) => p.gender === 'mom' || p.categorySlug === 'mom-care' || p.categoryName === 'Mom Care'
   );
 
   return (
-    <div className="w-full">
-      {/* 1. Hero Carousel */}
+    <div className="w-full bg-[#FFFDF9]">
+      {/* 1. Hero Carousel ("Everything Little. Everything Loved.") */}
       <HeroCarousel />
 
-      {/* 2. Category Grid (8 Image Cards) */}
+      {/* 2. Boy & Girl Collection Cards ("Made for Every Little One") */}
+      <BoyGirlCollection />
+
+      {/* 3. Category Grid (8 Curated Image Cards) */}
       <CategoryGrid categories={categories} />
 
-      {/* 3. Editorial Collection Feature ("Made with Care for Moms & Little Ones") */}
-      <EditorialFeature />
-
-      {/* 4. New Arrivals (4-column responsive grid) */}
+      {/* 4. New Arrivals (Responsive Grid with 1-Click Add to Cart) */}
       <NewArrivals products={products} />
 
       {/* 5. Best Sellers ("Loved by Moms" Horizontal Carousel) */}
       <BestSellers products={products} />
 
-      {/* 6. Mom & Baby Feature Spotlight ("Because Every Mom Deserves a Little Care Too") */}
+      {/* 6. Mom Care Spotlight ("Because Every Mom Deserves Care Too") */}
       <MomCareSpotlight momProducts={momProducts.length > 0 ? momProducts : products.slice(4, 7)} />
 
-      {/* 7. Why Butterfly Care Benefit Cards */}
+      {/* 7. Why Moms Choose Us */}
       <WhyChooseUs />
 
       {/* 8. Animated Trust Statistics Counter */}

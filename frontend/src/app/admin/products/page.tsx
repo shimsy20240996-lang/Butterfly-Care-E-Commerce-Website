@@ -47,6 +47,8 @@ export default function AdminProductsPage() {
   const [shortDescription, setShortDescription] = useState('');
   const [description, setDescription] = useState('');
   const [materials, setMaterials] = useState('100% GOTS Organic Cotton / Non-toxic');
+  const [gender, setGender] = useState<'boy' | 'girl' | 'unisex' | 'mom'>('unisex');
+  const [sale, setSale] = useState(false);
   const [careInstructions, setCareInstructions] = useState('Gentle cold machine wash or hand wash.');
   const [imageUrl, setImageUrl] = useState('');
   const [sizesStr, setSizesStr] = useState('');
@@ -92,6 +94,8 @@ export default function AdminProductsPage() {
     setStock(15);
     setBrand('Butterfly Care Pure');
     setAgeGroup('0-36 months');
+    setGender('unisex');
+    setSale(false);
     setShortDescription('');
     setDescription('');
     setMaterials('100% GOTS Organic Cotton / Hypoallergenic');
@@ -116,6 +120,8 @@ export default function AdminProductsPage() {
     setStock(p.stock);
     setBrand(p.brand);
     setAgeGroup(p.ageGroup);
+    setGender(p.gender || 'unisex');
+    setSale(Boolean(p.sale));
     setShortDescription(p.shortDescription);
     setDescription(p.description);
     setMaterials(p.materials);
@@ -133,7 +139,7 @@ export default function AdminProductsPage() {
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !price) {
-      showToast('Please enter product name and price.', 'error');
+      showToast('Name and price are required.', 'error');
       return;
     }
 
@@ -148,6 +154,8 @@ export default function AdminProductsPage() {
         stock: Number(stock),
         brand,
         ageGroup,
+        gender,
+        sale,
         shortDescription,
         description,
         materials,
@@ -377,7 +385,7 @@ export default function AdminProductsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                   <div>
                     <label className="block font-semibold text-butterfly-text mb-1">Category *</label>
                     <select
@@ -388,6 +396,20 @@ export default function AdminProductsPage() {
                       {categories.map((c) => (
                         <option key={c._id} value={c._id}>{c.name}</option>
                       ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-butterfly-text mb-1">Gender / Target *</label>
+                    <select
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value as any)}
+                      className="w-full p-3 rounded-xl border border-butterfly-border bg-butterfly-bg font-medium"
+                    >
+                      <option value="unisex">Unisex 🤍</option>
+                      <option value="boy">Baby Boy 💙</option>
+                      <option value="girl">Baby Girl 🩷</option>
+                      <option value="mom">Mom Care 🌸</option>
                     </select>
                   </div>
 
@@ -504,7 +526,7 @@ export default function AdminProductsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-butterfly-bg border border-butterfly-border">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 p-4 rounded-2xl bg-butterfly-bg border border-butterfly-border text-xs font-semibold text-butterfly-text">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" checked={featured} onChange={(e) => setFeatured(e.target.checked)} className="accent-butterfly-primary" />
                     <span>Featured</span>
@@ -516,6 +538,10 @@ export default function AdminProductsPage() {
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" checked={newArrival} onChange={(e) => setNewArrival(e.target.checked)} className="accent-butterfly-primary" />
                     <span>New Arrival</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" checked={sale} onChange={(e) => setSale(e.target.checked)} className="accent-butterfly-primary" />
+                    <span>On Sale</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} className="accent-butterfly-primary" />
