@@ -7,14 +7,16 @@
 :root {
   --font-serif: 'Playfair Display', Georgia, serif;
   --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --color-bg: #FFFDF9;
-  --color-text: #3F4650;
-  --color-text-muted: #747A82;
+  --color-bg: #FFFDFB;
+  --color-text: #454545;
+  --color-text-muted: #7A7A7A;
   --color-boy-primary: #8EC5E8;
-  --color-boy-light: #DFF2FC;
+  --color-boy-light: #E5F4FC;
+  --color-boy-dark: #4F7FA0;
   --color-girl-primary: #E8A6B8;
-  --color-girl-light: #F9DDE5;
-  --color-border: #E9E9E9;
+  --color-girl-light: #FCE8EE;
+  --color-girl-dark: #B86F84;
+  --color-border: #EFEAE6;
 }
 
 body {
@@ -30,85 +32,28 @@ h1, h2, h3, .font-serif {
   font-family: var(--font-serif);
 }
 
-/* Custom Soft Pastel Scrollbar */
+/* Custom Soft Scrollbar */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #FFFDF9;
+  background: #FFFDFB;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E8D5CE;
+  background: #E5D9D2;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #B98276;
+  background: #C4B5AC;
 }
 
-/* Glassmorphism */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.90);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(233, 233, 233, 0.8);
-}
-
+/* Glass & Clean utilities */
 .glass-nav {
-  background: rgba(255, 253, 249, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-/* Shimmer animation */
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, #F9F9F9 25%, #FFF5F7 50%, #F3FAFE 75%, #F9F9F9 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.6s infinite;
-}
-
-/* Image zoom container */
-.img-zoom-container {
-  overflow: hidden;
-}
-.img-zoom-container img {
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.img-zoom-container:hover img {
-  transform: scale(1.05);
-}
-
-/* Butterfly gentle float animation */
-@keyframes floatGentle {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-6px) rotate(2deg);
-  }
-}
-
-.animate-float {
-  animation: floatGentle 4s ease-in-out infinite;
-}
-
-/* Dual glow effects */
-.glow-boy {
-  box-shadow: 0 10px 30px -5px rgba(142, 197, 232, 0.4);
-}
-
-.glow-girl {
-  box-shadow: 0 10px 30px -5px rgba(232, 166, 184, 0.4);
+  background: rgba(255, 253, 251, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }

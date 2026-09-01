@@ -75,13 +75,30 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
     const gender = req.query.gender as string;
     if (gender && gender !== 'all') {
       if (gender === 'boy') {
-        filtered = filtered.filter(p => p.gender === 'boy' || p.gender === 'unisex');
+        filtered = filtered.filter(
+          p =>
+            p.gender === 'boy' ||
+            p.gender === 'unisex' ||
+            p.name.toLowerCase().includes('boy') ||
+            p.categorySlug === 'clothing' ||
+            p.categorySlug === 'baby-care' ||
+            p.categorySlug === 'sleep-snuggle' ||
+            p.categorySlug === 'feeding-nursing'
+        );
       } else if (gender === 'girl') {
-        filtered = filtered.filter(p => p.gender === 'girl' || p.gender === 'unisex');
+        filtered = filtered.filter(
+          p =>
+            p.gender === 'girl' ||
+            p.gender === 'unisex' ||
+            p.name.toLowerCase().includes('girl') ||
+            p.categorySlug === 'clothing' ||
+            p.categorySlug === 'baby-care' ||
+            p.categorySlug === 'toys-gifts'
+        );
       } else if (gender === 'mom') {
         filtered = filtered.filter(p => p.gender === 'mom' || p.categorySlug === 'mom-care');
       } else {
-        filtered = filtered.filter(p => p.gender === gender);
+        filtered = filtered.filter(p => p.gender === gender || p.gender === 'unisex');
       }
     }
 

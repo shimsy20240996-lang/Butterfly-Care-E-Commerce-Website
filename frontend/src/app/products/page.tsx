@@ -6,24 +6,32 @@ import { Product } from '@/types';
 import { api } from '@/lib/api';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { ProductSkeleton } from '@/components/ui/Skeleton';
-import { Sparkles, SlidersHorizontal, Search, RefreshCw } from 'lucide-react';
+import { Search } from 'lucide-react';
 
-const FILTER_TABS = [
+const CATEGORY_TABS = [
   { id: 'all', label: 'ALL', color: 'default' },
-  { id: 'boy', label: 'BABY BOY 💙', color: 'boy' },
-  { id: 'girl', label: 'BABY GIRL 🩷', color: 'girl' },
-  { id: 'mom', label: 'MOM CARE', color: 'mom' },
-  { id: 'newArrival', label: 'NEW ARRIVALS', color: 'default' },
-  { id: 'bestSeller', label: 'BEST SELLERS', color: 'default' },
-  { id: 'sale', label: 'SALE', color: 'sale' }
+  { id: 'boy', label: '💙 BABY BOY', color: 'boy', gender: 'boy' },
+  { id: 'girl', label: '🩷 BABY GIRL', color: 'girl', gender: 'girl' },
+  { id: 'mom', label: '🤍 MOM CARE', color: 'mom', gender: 'mom' },
+  { id: 'feeding-nursing', label: 'FEEDING', color: 'default', category: 'feeding-nursing' },
+  { id: 'bath-care', label: 'BATH & CARE', color: 'default', category: 'bath-care' },
+  { id: 'toys-gifts', label: 'TOYS', color: 'default', category: 'toys-gifts' },
 ];
 
 function ProductsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const activeTab = searchParams.get('tab') || searchParams.get('gender') || 'all';
+  const activeCategoryParam = searchParams.get('category') || '';
+  const activeGenderParam = searchParams.get('gender') || '';
   const searchQuery = searchParams.get('search') || '';
+
+  // Determine active tab ID
+  let currentTab = 'all';
+  if (activeGenderParam === 'boy') currentTab = 'boy';
+  else if (activeGenderParam === 'girl') currentTab = 'girl';
+  else if (activeGenderParam === 'mom') currentTab = 'mom';
+  else if (activeCategoryParam) currentTab = activeCategoryParam;
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,20 +43,12 @@ function ProductsContent() {
         setLoading(true);
         const params: Record<string, any> = { limit: 50 };
 
-        if (activeTab === 'boy') {
-          params.gender = 'boy';
-        } else if (activeTab === 'girl') {
-          params.gender = 'girl';
-        } else if (activeTab === 'mom') {
-          params.gender = 'mom';
-        } else if (activeTab === 'newArrival') {
-          params.newArrival = 'true';
-        } else if (activeTab === 'bestSeller') {
-          params.bestSeller = 'true';
-        } else if (activeTab === 'sale') {
-          params.sale = 'true';
+        if (activeGenderParam) {
+          params.gender = activeGenderParam;
         }
-
+        if (activeCategoryParam) {
+          params.category = activeCategoryParam;
+        }
         if (searchQuery) {
           params.search = searchQuery;
         }
@@ -65,22 +65,22 @@ function ProductsContent() {
     };
 
     fetchProducts();
-  }, [activeTab, searchQuery]);
+  }, [activeGenderParam, activeCategoryParam, searchQuery]);
 
-  const handleTabChange = (tabId: string) => {
+  const handleTabClick = (tab: typeof CATEGORY_TABS[0]) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (tabId === 'all') {
-      params.delete('tab');
+
+    if (tab.id === 'all') {
       params.delete('gender');
-      params.delete('filter');
-    } else if (tabId === 'boy' || tabId === 'girl' || tabId === 'mom') {
-      params.set('tab', tabId);
-      params.set('gender', tabId);
-      params.delete('filter');
-    } else {
-      params.set('tab', tabId);
+      params.delete('category');
+    } else if (tab.gender) {
+      params.set('gender', tab.gender);
+      params.delete('category');
+    } else if (tab.category) {
+      params.set('category', tab.category);
       params.delete('gender');
     }
+
     router.push(`/products?${params.toString()}`);
   };
 
@@ -96,131 +96,122 @@ function ProductsContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDF9] py-8 md:py-14">
+    <div className="min-h-screen bg-[#FFFDFB] py-8 sm:py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
-        <div className="text-center max-w-2xl mx-auto mb-8 md:mb-12 space-y-2.5">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#3F4650] bg-white px-3.5 py-1 rounded-full border border-[#E9E9E9]">
-            <Sparkles className="w-3.5 h-3.5 text-[#E8A6B8]" />
-            <span>Gentle Essentials For Every Mom</span>
-          </div>
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-[#3F4650]">
+        <div className="text-center max-w-xl mx-auto mb-6 sm:mb-8 space-y-1">
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#454545]">
             Our Products
           </h1>
-          <p className="text-sm md:text-base text-[#747A82] font-normal">
-            Little essentials, big love.
+          <p className="text-sm text-[#7A7A7A]">
+            Everything for mom and little ones.
           </p>
         </div>
 
-        {/* Top Filter Bar & Search */}
-        <div className="mb-8 space-y-4">
-          {/* Main Filter Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none justify-start sm:justify-center">
-            {FILTER_TABS.map((tab) => {
-              const isSelected = activeTab === tab.id;
-
-              let activeStyles = 'bg-[#3F4650] text-white shadow-sm';
-              if (tab.color === 'boy' && isSelected) {
-                activeStyles = 'bg-[#DFF2FC] text-[#3F4650] border-2 border-[#8EC5E8] font-bold shadow-boy';
-              } else if (tab.color === 'girl' && isSelected) {
-                activeStyles = 'bg-[#F9DDE5] text-[#3F4650] border-2 border-[#E8A6B8] font-bold shadow-girl';
-              } else if (tab.color === 'mom' && isSelected) {
-                activeStyles = 'bg-white text-[#3F4650] border-2 border-[#3F4650] font-bold shadow-sm';
-              } else if (tab.color === 'sale' && isSelected) {
-                activeStyles = 'bg-[#3F4650] text-white font-bold shadow-sm';
-              }
-
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => handleTabChange(tab.id)}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 ${
-                    isSelected
-                      ? activeStyles
-                      : 'bg-white text-[#747A82] border border-[#E9E9E9] hover:text-[#3F4650] hover:border-[#747A82]'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Inline Search Bar */}
-          <div className="max-w-md mx-auto">
-            <form onSubmit={handleSearchSubmit} className="relative">
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search for something special..."
-                className="w-full pl-10 pr-20 py-2.5 rounded-full bg-white border border-[#E9E9E9] text-xs text-[#3F4650] placeholder:text-[#747A82] focus:outline-none focus:border-[#3F4650] shadow-xs transition-colors"
-              />
-              <Search className="w-4 h-4 text-[#747A82] absolute left-3.5 top-1/2 -translate-y-1/2" />
-              {searchInput && (
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 bg-[#3F4650] text-white text-[11px] font-bold rounded-full hover:bg-[#5A4945]"
-                >
-                  Search
-                </button>
-              )}
-            </form>
-          </div>
+        {/* 🔍 Search Input Bar */}
+        <div className="max-w-md mx-auto mb-6">
+          <form onSubmit={handleSearchSubmit} className="relative">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search products..."
+              className="w-full pl-10 pr-20 py-2.5 rounded-full bg-white border border-[#EFEAE6] text-xs text-[#454545] placeholder:text-[#7A7A7A] focus:outline-none focus:border-[#4F7FA0] shadow-soft transition-colors"
+            />
+            <Search className="w-4 h-4 text-[#7A7A7A] absolute left-3.5 top-1/2 -translate-y-1/2" />
+            {searchInput && (
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 bg-[#4F7FA0] text-white text-[11px] font-bold rounded-full hover:bg-[#3D6783]"
+              >
+                Search
+              </button>
+            )}
+          </form>
         </div>
 
-        {/* Product Count & Active Filters Indicator */}
-        <div className="flex items-center justify-between border-b border-[#E9E9E9] pb-4 mb-6 text-xs text-[#747A82]">
-          <div>
-            Showing <strong className="text-[#3F4650]">{products.length}</strong> items
+        {/* 🔘 Simple Category Pill Buttons */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 sm:mb-8 scrollbar-none justify-start sm:justify-center">
+          {CATEGORY_TABS.map((tab) => {
+            const isSelected = currentTab === tab.id;
+
+            let activeStyles = 'bg-[#4F7FA0] text-white shadow-soft font-bold';
+            if (tab.color === 'boy' && isSelected) {
+              activeStyles = 'bg-[#E5F4FC] text-[#4F7FA0] border-2 border-[#8EC5E8] font-bold shadow-soft';
+            } else if (tab.color === 'girl' && isSelected) {
+              activeStyles = 'bg-[#FCE8EE] text-[#B86F84] border-2 border-[#E8A6B8] font-bold shadow-soft';
+            } else if (tab.color === 'mom' && isSelected) {
+              activeStyles = 'bg-white text-[#454545] border-2 border-[#454545] font-bold shadow-soft';
+            }
+
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => handleTabClick(tab)}
+                className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 active:scale-95 ${
+                  isSelected
+                    ? activeStyles
+                    : 'bg-white text-[#7A7A7A] border border-[#EFEAE6] hover:text-[#454545] hover:border-[#7A7A7A]'
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Product Count / Status */}
+        <div className="flex items-center justify-between border-b border-[#EFEAE6] pb-3 mb-6 text-xs text-[#7A7A7A]">
+          <span>
+            Showing <strong className="text-[#454545]">{products.length}</strong> products
             {searchQuery && (
-              <span> for &quot;<strong className="text-[#3F4650]">{searchQuery}</strong>&quot;</span>
+              <span> for &quot;<strong className="text-[#454545]">{searchQuery}</strong>&quot;</span>
             )}
-          </div>
-          {(searchQuery || activeTab !== 'all') && (
+          </span>
+          {(searchQuery || currentTab !== 'all') && (
             <button
               onClick={() => {
                 setSearchInput('');
                 router.push('/products');
               }}
-              className="text-xs text-[#5BA7D1] hover:underline font-semibold flex items-center gap-1"
+              className="text-xs text-[#4F7FA0] hover:underline font-semibold"
             >
-              <RefreshCw className="w-3 h-3" />
-              <span>Clear filters</span>
+              Show All
             </button>
           )}
         </div>
 
-        {/* Product Grid: 4 columns desktop, 3 columns tablet, 2 columns mobile */}
+        {/* 📦 Product Grid: 4 columns desktop, 3 columns tablet, 2 columns mobile */}
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
           </div>
         ) : products.length === 0 ? (
-          <div className="py-20 text-center max-w-md mx-auto space-y-4">
-            <div className="w-16 h-16 rounded-full bg-[#FFF5F7] flex items-center justify-center mx-auto text-2xl">
+          <div className="py-16 text-center max-w-sm mx-auto space-y-3">
+            <div className="w-14 h-14 rounded-full bg-[#E5F4FC] flex items-center justify-center mx-auto text-xl">
               🦋
             </div>
-            <h3 className="font-serif text-xl font-bold text-[#3F4650]">
-              No little treasures found
+            <h3 className="font-serif text-lg font-bold text-[#454545]">
+              No products found
             </h3>
-            <p className="text-xs text-[#747A82] leading-relaxed">
-              We couldn&apos;t find any products matching your selection. Try clearing your filters or search keywords.
+            <p className="text-xs text-[#7A7A7A]">
+              Try searching with different keywords or choosing another category.
             </p>
             <button
               onClick={() => {
                 setSearchInput('');
                 router.push('/products');
               }}
-              className="inline-flex px-6 py-2.5 rounded-full bg-[#3F4650] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#5A4945] transition-colors"
+              className="px-6 py-2 rounded-xl bg-[#4F7FA0] text-white text-xs font-bold uppercase tracking-wider"
             >
               VIEW ALL PRODUCTS
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             {products.map((prod, idx) => (
               <ProductCard key={prod._id} product={prod} priority={idx < 4} />
             ))}
@@ -235,10 +226,10 @@ export default function ProductsPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#FFFDF9] py-14 flex items-center justify-center">
-          <div className="text-center space-y-3">
-            <div className="w-10 h-10 border-3 border-[#8EC5E8] border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs text-[#747A82] font-medium tracking-wide">Loading treasures...</p>
+        <div className="min-h-screen bg-[#FFFDFB] py-14 flex items-center justify-center">
+          <div className="text-center space-y-2">
+            <div className="w-8 h-8 border-2 border-[#8EC5E8] border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-xs text-[#7A7A7A]">Loading products...</p>
           </div>
         </div>
       }
