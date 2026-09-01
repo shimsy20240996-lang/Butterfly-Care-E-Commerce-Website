@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Sparkles, ArrowRight, X } from 'lucide-react';
 
 interface WelcomeOverlayProps {
@@ -54,90 +55,54 @@ export const WelcomeOverlay: React.FC<WelcomeOverlayProps> = ({
             <X className="w-5 h-5" />
           </button>
 
-          {/* Animated Dual Blue + Pink Butterfly Emblem */}
+          {/* Official Logo Display */}
           <motion.div
-            initial={{ scale: 0.6, rotate: -8 }}
-            animate={{ scale: 1, rotate: [0, 4, -4, 0] }}
-            transition={{
-              scale: { duration: 0.5 },
-              rotate: { repeat: Infinity, duration: 4, ease: 'easeInOut' }
-            }}
-            className="mx-auto mb-6 flex items-center justify-center"
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="mx-auto mb-5 flex items-center justify-center"
           >
-            <div className="relative p-4 rounded-full bg-white/90 shadow-sm border border-[#E9E9E9]">
-              <svg width="64" height="64" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* 💙 Baby Boy Blue Wing */}
-                <path
-                  d="M48 48C48 48 38 20 20 20C8 20 5 32 8 45C11 56 26 64 47 70"
-                  fill="url(#ovBoyWing)"
-                />
-                <path
-                  d="M47 54C47 54 32 58 24 68C18 78 24 86 35 84C44 82 48 72 49 64"
-                  fill="#DFF2FC"
-                />
-                {/* 🩷 Baby Girl Pink Wing */}
-                <path
-                  d="M52 48C52 48 62 20 80 20C92 20 95 32 92 45C89 56 74 64 53 70"
-                  fill="url(#ovGirlWing)"
-                />
-                <path
-                  d="M53 54C53 54 68 58 76 68C82 78 76 86 65 84C56 82 52 72 51 64"
-                  fill="#F9DDE5"
-                />
-                {/* Center Silhouette */}
-                <circle cx="50" cy="30" r="4" fill="#3F4650" />
-                <path
-                  d="M50 36C49 36 48.5 48 48.5 60C48.5 68 50 74 50 74C50 74 51.5 68 51.5 60C51.5 48 51 36 50 36Z"
-                  fill="#3F4650"
-                />
-                <path d="M48 28C45 20 38 15 34 16" stroke="#8EC5E8" strokeWidth="2.5" strokeLinecap="round" />
-                <path d="M52 28C55 20 62 15 66 16" stroke="#E8A6B8" strokeWidth="2.5" strokeLinecap="round" />
-                <defs>
-                  <linearGradient id="ovBoyWing" x1="10" y1="20" x2="48" y2="70" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#8EC5E8" />
-                    <stop offset="1" stopColor="#5BA7D1" />
-                  </linearGradient>
-                  <linearGradient id="ovGirlWing" x1="90" y1="20" x2="52" y2="70" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#E8A6B8" />
-                    <stop offset="1" stopColor="#D77F99" />
-                  </linearGradient>
-                </defs>
-              </svg>
+            <div className="relative p-4 rounded-3xl bg-white/90 shadow-sm border border-[#E9E9E9]">
+              <Image
+                src="/logo.jpeg"
+                alt="Butterfly Care Logo"
+                width={160}
+                height={100}
+                className="h-20 w-auto object-contain mix-blend-multiply"
+              />
             </div>
           </motion.div>
 
-          {/* Welcome Tag */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 border border-[#E9E9E9] text-xs font-semibold tracking-wider text-[#3F4650] mb-3">
+          {/* Greeting Badge */}
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/95 border border-[#E9E9E9] text-xs font-bold uppercase tracking-wider text-[#3F4650] mb-3 shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-[#E8A6B8]" />
-            <span>Welcome back, {userName ? userName.split(' ')[0] : 'Mom'}! 🤍</span>
+            <span>Welcome to Butterfly Care</span>
           </div>
 
-          {/* Heading */}
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#3F4650] mb-1">
-            BUTTERFLY CARE
+          {/* Main Title */}
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#3F4650] mb-2 leading-tight">
+            {userName ? `Welcome back, ${userName.split(' ')[0]}! 🤍` : 'Welcome back, Mom! 🤍'}
           </h2>
-          <p className="font-sans text-xs tracking-widest uppercase text-[#747A82] mb-4">
-            — for every mom —
+
+          <p className="text-xs sm:text-sm text-[#747A82] max-w-sm mx-auto mb-8 leading-relaxed">
+            Let&apos;s discover something soft, pure, and special for you and your little one today.
           </p>
 
-          <p className="text-sm text-[#747A82] leading-relaxed max-w-sm mx-auto mb-8">
-            Let&apos;s find something gentle and special for you and your little one today.
-          </p>
-
-          {/* CTA Action Buttons */}
+          {/* Action CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
               onClick={handleShopProducts}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#3F4650] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#5A4945] active:scale-95 transition-all shadow-md group"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-[#3F4650] hover:bg-[#5A4945] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 active:scale-95 group"
             >
               <span>SHOP OUR PRODUCTS</span>
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </button>
+
             <button
               onClick={onClose}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white text-[#3F4650] border border-[#E9E9E9] text-xs font-semibold hover:bg-black/5 transition-all"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-full bg-white/80 hover:bg-white text-[#3F4650] border border-[#E9E9E9] text-xs font-semibold uppercase tracking-wider transition-all hover:border-[#747A82]"
             >
-              Continue to Home
+              Go to Account
             </button>
           </div>
         </motion.div>
