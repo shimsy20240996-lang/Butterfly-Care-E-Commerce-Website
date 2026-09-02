@@ -24,6 +24,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const { showToast } = useToastStore();
 
   const [isAdded, setIsAdded] = useState(false);
+  const [imgSrc, setImgSrc] = useState(
+    product.images && product.images.length > 0 ? product.images[0] : '/products/img1.webp'
+  );
 
   const inWishlist = isInWishlist(product._id);
   const currentPrice = product.discountPrice || product.price;
@@ -45,7 +48,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       product: product._id,
       name: product.name,
       slug: product.slug,
-      image: product.images[0],
+      image: imgSrc,
       price: currentPrice,
       originalPrice: product.discountPrice ? product.price : undefined,
       quantity: 1,
@@ -68,11 +71,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       <div className="relative aspect-square w-full overflow-hidden bg-[#FFFDFB]">
         <Link href={`/product/${product.slug}`} className="block w-full h-full">
           <Image
-            src={product.images[0]}
+            src={imgSrc}
             alt={product.name}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             priority={priority}
+            onError={() => setImgSrc('/products/img1.webp')}
             className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </Link>
