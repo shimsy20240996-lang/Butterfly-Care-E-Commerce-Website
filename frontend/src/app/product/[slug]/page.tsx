@@ -42,6 +42,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
 
   const [selectedImage, setSelectedImage] = useState(0);
+  const [mainImgSrc, setMainImgSrc] = useState('/products/img1.webp');
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
@@ -74,6 +75,7 @@ export default function ProductDetailPage() {
             setSelectedColor(data.product.colors[0]);
           }
           setSelectedImage(0);
+          setMainImgSrc(data.product.images?.[0] || '/products/img1.webp');
           setQuantity(1);
         }
       } catch (err) {
@@ -85,6 +87,12 @@ export default function ProductDetailPage() {
 
     fetchProductData();
   }, [slug]);
+
+  useEffect(() => {
+    if (product && product.images && product.images[selectedImage]) {
+      setMainImgSrc(product.images[selectedImage]);
+    }
+  }, [product, selectedImage]);
 
   if (loading) {
     return (
@@ -119,7 +127,7 @@ export default function ProductDetailPage() {
       product: product._id,
       name: product.name,
       slug: product.slug,
-      image: product.images[selectedImage] || product.images[0],
+      image: mainImgSrc,
       price: currentPrice,
       originalPrice: product.discountPrice ? product.price : undefined,
       quantity,
@@ -166,10 +174,11 @@ export default function ProductDetailPage() {
             {/* Big Main Image */}
             <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-white border border-butterfly-border shadow-soft group">
               <Image
-                src={product.images[selectedImage] || product.images[0]}
+                src={mainImgSrc}
                 alt={product.name}
                 fill
                 priority
+                onError={() => setMainImgSrc('/products/img1.webp')}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />

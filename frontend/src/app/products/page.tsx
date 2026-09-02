@@ -13,9 +13,12 @@ const CATEGORY_TABS = [
   { id: 'boy', label: '💙 BABY BOY', color: 'boy', gender: 'boy' },
   { id: 'girl', label: '🩷 BABY GIRL', color: 'girl', gender: 'girl' },
   { id: 'mom', label: '🤍 MOM CARE', color: 'mom', gender: 'mom' },
-  { id: 'feeding-nursing', label: 'FEEDING', color: 'default', category: 'feeding-nursing' },
+  { id: 'clothing', label: 'CLOTHING', color: 'default', category: 'clothing' },
   { id: 'bath-care', label: 'BATH & CARE', color: 'default', category: 'bath-care' },
-  { id: 'toys-gifts', label: 'TOYS', color: 'default', category: 'toys-gifts' },
+  { id: 'feeding-nursing', label: 'FEEDING', color: 'default', category: 'feeding-nursing' },
+  { id: 'sleep-snuggle', label: 'SLEEP & SNUGGLE', color: 'default', category: 'sleep-snuggle' },
+  { id: 'toys-gifts', label: 'TOYS & GIFTS', color: 'default', category: 'toys-gifts' },
+  { id: 'baby-essentials', label: 'ESSENTIALS', color: 'default', category: 'baby-essentials' },
 ];
 
 function ProductsContent() {
@@ -41,7 +44,7 @@ function ProductsContent() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const params: Record<string, any> = { limit: 50 };
+        const params: Record<string, any> = { limit: 100 };
 
         if (activeGenderParam) {
           params.gender = activeGenderParam;

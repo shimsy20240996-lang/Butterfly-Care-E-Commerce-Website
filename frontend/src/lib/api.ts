@@ -61,11 +61,25 @@ class ApiClient {
       return filterFallbackProducts(params) as unknown as T;
     }
 
+    if (endpoint.startsWith('/products/slug/')) {
+      const slug = endpoint.replace('/products/slug/', '');
+      const item = FALLBACK_PRODUCTS.find((p) => p.slug === slug || p._id === slug);
+      if (item) {
+        const related = FALLBACK_PRODUCTS.filter(
+          (p) => p._id !== item._id && (p.categorySlug === item.categorySlug || p.gender === item.gender)
+        ).slice(0, 4);
+        return { product: item, relatedProducts: related, reviews: [] } as unknown as T;
+      }
+    }
+
     if (endpoint.startsWith('/products/')) {
       const slug = endpoint.replace('/products/', '');
       const item = FALLBACK_PRODUCTS.find((p) => p.slug === slug || p._id === slug);
       if (item) {
-        return { product: item } as unknown as T;
+        const related = FALLBACK_PRODUCTS.filter(
+          (p) => p._id !== item._id && (p.categorySlug === item.categorySlug || p.gender === item.gender)
+        ).slice(0, 4);
+        return { product: item, relatedProducts: related, reviews: [] } as unknown as T;
       }
     }
 

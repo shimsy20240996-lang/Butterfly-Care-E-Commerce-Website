@@ -144,7 +144,7 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
 
     // Pagination
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 24;
+    const limit = parseInt(req.query.limit as string) || 100;
     const total = filtered.length;
     const totalPages = Math.ceil(total / limit);
     const startIndex = (page - 1) * limit;
