@@ -7,7 +7,7 @@ import { MessageCircle, Phone, Mail, MapPin } from 'lucide-react';
 import { generateWhatsAppLink } from '@/lib/utils';
 
 export const Footer: React.FC = () => {
-  const whatsappUrl = generateWhatsAppLink('+94 74 022 5855', 'Hello BUTTERFLY CARE, I have an inquiry.');
+  const whatsappUrl = generateWhatsAppLink(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '94740225855', 'Hello BUTTERFLY CARE, I have an inquiry.');
 
   return (
     <footer className="bg-white border-t border-[#EFEAE6] text-[#454545] pt-12 pb-8">

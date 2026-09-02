@@ -156,6 +156,7 @@ export interface Order {
   status: 'Pending' | 'Confirmed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
   timeline: OrderTimeline[];
   notes?: string;
+  whatsappOpened?: boolean;
   createdAt: string;
   updatedAt: string;
 }

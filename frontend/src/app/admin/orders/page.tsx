@@ -270,7 +270,11 @@ export default function AdminOrdersPage() {
                         <img src={item.image} alt="" className="w-10 h-10 rounded-lg object-cover" />
                         <div>
                           <p className="font-semibold">{item.name}</p>
-                          <p className="text-[11px] text-butterfly-textMuted">Qty: {item.quantity}</p>
+                          <p className="text-[11px] text-butterfly-textMuted">
+                            Qty: {item.quantity}
+                            {item.selectedSize ? ` • Size: ${item.selectedSize}` : ''}
+                            {item.selectedColor ? ` • Color: ${item.selectedColor}` : ''}
+                          </p>
                         </div>
                       </div>
                       <span className="font-bold">{formatLKR(item.price * item.quantity)}</span>
@@ -279,9 +283,23 @@ export default function AdminOrdersPage() {
                 </div>
               </div>
 
-              <div className="flex justify-between items-baseline pt-3 border-t border-butterfly-border text-sm">
-                <span className="font-bold text-butterfly-text">Total Order Amount:</span>
-                <span className="font-serif font-bold text-lg text-butterfly-primary">{formatLKR(viewOrder.total)}</span>
+              <div className="pt-3 border-t border-butterfly-border space-y-1.5 text-xs">
+                <div className="flex justify-between text-butterfly-textMuted">
+                  <span>Subtotal:</span>
+                  <span className="font-semibold text-butterfly-text">{formatLKR(viewOrder.subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-butterfly-textMuted">
+                  <span>Delivery Fee:</span>
+                  <span className="font-semibold text-butterfly-text">{viewOrder.deliveryFee === 0 ? 'FREE' : formatLKR(viewOrder.deliveryFee)}</span>
+                </div>
+                <div className="flex justify-between items-baseline pt-2 border-t border-butterfly-border text-sm">
+                  <span className="font-bold text-butterfly-text">Total Order Amount:</span>
+                  <span className="font-serif font-bold text-lg text-butterfly-primary">{formatLKR(viewOrder.total)}</span>
+                </div>
+                <div className="flex justify-between text-[11px] text-butterfly-textMuted pt-1">
+                  <span>Order Date:</span>
+                  <span>{new Date(viewOrder.createdAt).toLocaleString()}</span>
+                </div>
               </div>
             </div>
           </div>

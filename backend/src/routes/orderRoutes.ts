@@ -5,7 +5,8 @@ import {
   getOrderByNumber,
   getOrderById,
   getAllOrdersAdmin,
-  updateOrderStatusAdmin
+  updateOrderStatusAdmin,
+  markWhatsAppOpened
 } from '../controllers/orderController';
 import { protect, adminOnly } from '../middleware/auth';
 
@@ -17,5 +18,6 @@ router.get('/track/:orderNumber', getOrderByNumber);
 router.get('/admin/all', protect, adminOnly, getAllOrdersAdmin);
 router.get('/:id', getOrderById);
 router.put('/:id/status', protect, adminOnly, updateOrderStatusAdmin);
+router.put('/:id/whatsapp-opened', markWhatsAppOpened);
 
 export default router;

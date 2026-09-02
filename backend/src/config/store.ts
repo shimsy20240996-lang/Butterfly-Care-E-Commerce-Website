@@ -118,6 +118,7 @@ export interface InMemoryOrder {
     note?: string;
   }>;
   notes?: string;
+  whatsappOpened?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -349,12 +350,12 @@ class StoreService {
     this.orders = [
       {
         _id: 'ord-1001',
-        orderNumber: 'BC-2026-00101',
+        orderNumber: 'BC-1001',
         user: 'user-2',
         customerDetails: {
           fullName: 'Dilani Perera',
           email: 'dilani.p@gmail.com',
-          phone: '+94712345678'
+          phone: '0712345678'
         },
         deliveryAddress: {
           addressLine: '15/3 Flower Road',
@@ -408,12 +409,12 @@ class StoreService {
       },
       {
         _id: 'ord-1002',
-        orderNumber: 'BC-2026-00102',
+        orderNumber: 'BC-1002',
         user: 'user-3',
         customerDetails: {
           fullName: 'Kavindi Jayawardena',
           email: 'kavindi.j@yahoo.com',
-          phone: '+94772345679'
+          phone: '0772345679'
         },
         deliveryAddress: {
           addressLine: '88 Negombo Road',
@@ -458,10 +459,18 @@ class StoreService {
   }
 
   public generateOrderNumber(): string {
-    const year = new Date().getFullYear();
-    const count = this.orders.length + 1;
-    const formattedCount = String(count).padStart(5, '0');
-    return `BC-${year}-${formattedCount}`;
+    const baseNumber = 1000;
+    let highestNum = baseNumber;
+    for (const order of this.orders) {
+      const match = order.orderNumber.match(/^BC-(\d+)$/i);
+      if (match) {
+        const num = parseInt(match[1], 10);
+        if (!isNaN(num) && num > highestNum) {
+          highestNum = num;
+        }
+      }
+    }
+    return `BC-${highestNum + 1}`;
   }
 }
 

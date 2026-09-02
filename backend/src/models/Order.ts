@@ -44,6 +44,7 @@ export interface IOrder extends Document {
   status: 'Pending' | 'Confirmed' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
   timeline: IOrderTimeline[];
   notes?: string;
+  whatsappOpened?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -108,7 +109,8 @@ const OrderSchema = new Schema<IOrder>(
       default: 'Pending'
     },
     timeline: [TimelineSchema],
-    notes: { type: String, default: '' }
+    notes: { type: String, default: '' },
+    whatsappOpened: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

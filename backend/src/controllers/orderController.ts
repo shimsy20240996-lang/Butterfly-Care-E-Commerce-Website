@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import { store, InMemoryOrder } from '../config/store';
 import { AuthRequest } from '../middleware/auth';
+import { Order } from '../models/Order';
+import { Product } from '../models/Product';
+import { Coupon } from '../models/Coupon';
 
 // @desc    Create new customer order (Supports Guest & Logged-in user)
 // @route   POST /api/orders
@@ -16,71 +20,136 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
       notes
     } = req.body;
 
-    if (!customerDetails || !customerDetails.fullName || !customerDetails.phone) {
-      res.status(400).json({ success: false, message: 'Please provide customer name and phone number.' });
+    // 1. Validate Customer Details
+    if (!customerDetails || !customerDetails.fullName?.trim() || !customerDetails.phone?.trim()) {
+      res.status(400).json({ success: false, message: 'Please provide customer name and WhatsApp phone number.' });
       return;
     }
 
-    if (!deliveryAddress || !deliveryAddress.addressLine || !deliveryAddress.district || !deliveryAddress.city) {
+    // 2. Validate Delivery Address
+    if (
+      !deliveryAddress ||
+      !deliveryAddress.addressLine?.trim() ||
+      !deliveryAddress.city?.trim() ||
+      !deliveryAddress.district?.trim()
+    ) {
       res.status(400).json({ success: false, message: 'Please provide complete delivery address and district.' });
       return;
     }
 
+    // 3. Validate Cart Items
     if (!items || !Array.isArray(items) || items.length === 0) {
       res.status(400).json({ success: false, message: 'Cart items are required to place an order.' });
       return;
     }
 
-    // Calculate item pricing and verify items
+    // 4. Validate Products, Stock & Calculate Subtotal from Server-Side Database
+    const isMongoConnected = mongoose.connection.readyState === 1;
     let subtotal = 0;
-    const validatedItems = items.map((item: any) => {
-      const prod = store.products.find(p => p._id === item.product || p.slug === item.slug);
-      const unitPrice = prod ? (prod.discountPrice || prod.price) : Number(item.price);
-      const itemQty = Math.max(1, Number(item.quantity) || 1);
-      subtotal += unitPrice * itemQty;
+    const validatedItems: any[] = [];
 
-      // Adjust stock
-      if (prod && prod.stock >= itemQty) {
-        prod.stock -= itemQty;
+    for (const item of items) {
+      const itemQty = Math.max(1, Math.floor(Number(item.quantity)) || 1);
+      let prod: any = null;
+
+      // Retrieve product from MongoDB if connected, else fallback to store
+      if (isMongoConnected) {
+        if (mongoose.isValidObjectId(item.product)) {
+          prod = await Product.findById(item.product);
+        }
+        if (!prod && item.slug) {
+          prod = await Product.findOne({ slug: item.slug });
+        }
       }
 
-      return {
-        product: prod ? prod._id : item.product,
-        name: prod ? prod.name : item.name,
-        slug: prod ? prod.slug : item.slug,
-        image: prod && prod.images.length > 0 ? prod.images[0] : item.image,
+      if (!prod) {
+        prod = store.products.find(p => p._id === item.product || p.slug === item.slug);
+      }
+
+      if (!prod) {
+        res.status(400).json({
+          success: false,
+          message: `Product "${item.name || item.slug || 'Unknown'}" was not found or is unavailable.`
+        });
+        return;
+      }
+
+      // Check stock
+      if (prod.stock !== undefined && prod.stock < itemQty) {
+        res.status(400).json({
+          success: false,
+          message: `Sorry, "${prod.name}" has only ${prod.stock} items left in stock.`
+        });
+        return;
+      }
+
+      // Server-side current price verification (Never trust frontend submitted price)
+      const unitPrice = (prod.discountPrice && prod.discountPrice > 0 && prod.discountPrice < prod.price)
+        ? prod.discountPrice
+        : prod.price;
+
+      subtotal += unitPrice * itemQty;
+
+      // Deduct stock in MongoDB and store
+      if (isMongoConnected && prod._id && mongoose.isValidObjectId(prod._id)) {
+        await Product.findByIdAndUpdate(prod._id, { $inc: { stock: -itemQty } });
+      }
+      if (prod.stock !== undefined) {
+        prod.stock = Math.max(0, prod.stock - itemQty);
+      }
+
+      if (isMongoConnected) {
+        const matchingStoreProd = store.products.find(p => p.slug === prod.slug || p._id === prod._id);
+        if (matchingStoreProd && matchingStoreProd !== prod && matchingStoreProd.stock !== undefined) {
+          matchingStoreProd.stock = Math.max(0, matchingStoreProd.stock - itemQty);
+        }
+      }
+
+      validatedItems.push({
+        product: prod._id ? String(prod._id) : String(item.product),
+        name: prod.name,
+        slug: prod.slug,
+        image: prod.images && prod.images.length > 0 ? prod.images[0] : (item.image || ''),
         price: unitPrice,
         quantity: itemQty,
-        selectedSize: item.selectedSize || '',
-        selectedColor: item.selectedColor || '',
-        sku: prod ? prod.sku : (item.sku || '')
-      };
-    });
+        selectedSize: item.selectedSize?.trim() || '',
+        selectedColor: item.selectedColor?.trim() || '',
+        sku: prod.sku || item.sku || ''
+      });
+    }
 
-    // Calculate delivery fee
-    let deliveryFee = store.settings.defaultDeliveryFee;
+    // 5. Calculate Delivery Fee based on District and Free Shipping Threshold
+    let deliveryFee = store.settings.defaultDeliveryFee || 450;
     const districtMatch = store.settings.districtDeliveryFees.find(
-      d => d.district.toLowerCase() === deliveryAddress.district.toLowerCase()
+      d => d.district.toLowerCase() === deliveryAddress.district.trim().toLowerCase()
     );
     if (districtMatch) {
       deliveryFee = districtMatch.fee;
     }
 
-    // Express delivery surcharge
     if (deliveryType === 'express') {
       deliveryFee += (store.settings.expressDeliveryFee - store.settings.defaultDeliveryFee);
     }
 
-    // Free shipping check
     if (subtotal >= store.settings.freeShippingThreshold) {
       deliveryFee = 0;
     }
 
-    // Apply Coupon if provided
+    // 6. Apply Coupon if provided
     let discount = 0;
-    if (couponCode) {
-      const coupon = store.coupons.find(c => c.code.toUpperCase() === couponCode.toUpperCase() && c.active);
-      if (coupon && subtotal >= coupon.minOrderValue) {
+    let validatedCouponCode: string | undefined = undefined;
+    if (couponCode && typeof couponCode === 'string' && couponCode.trim()) {
+      const codeUpper = couponCode.trim().toUpperCase();
+      let coupon: any = null;
+
+      if (isMongoConnected) {
+        coupon = await Coupon.findOne({ code: codeUpper, active: true });
+      }
+      if (!coupon) {
+        coupon = store.coupons.find(c => c.code.toUpperCase() === codeUpper && c.active);
+      }
+
+      if (coupon && subtotal >= (coupon.minOrderValue || 0)) {
         if (coupon.discountType === 'percentage') {
           discount = Math.round((subtotal * coupon.discountValue) / 100);
           if (coupon.maxDiscount && discount > coupon.maxDiscount) {
@@ -89,15 +158,46 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
         } else {
           discount = coupon.discountValue;
         }
-        coupon.usedCount += 1;
+
+        if (isMongoConnected && coupon._id && mongoose.isValidObjectId(coupon._id)) {
+          await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 } });
+        }
+        if (coupon.usedCount !== undefined) {
+          coupon.usedCount += 1;
+        }
+        validatedCouponCode = codeUpper;
       }
     }
 
     const total = Math.max(0, subtotal + deliveryFee - discount);
-    const orderNumber = store.generateOrderNumber();
 
-    const newOrder: InMemoryOrder = {
-      _id: `ord-${Date.now()}`,
+    // 7. Generate Unique Sequential Order Number (Format: BC-1001, BC-1002, BC-1025)
+    let orderNumber = store.generateOrderNumber();
+    if (isMongoConnected) {
+      try {
+        const lastOrders = await Order.find({ orderNumber: /^BC-\d+$/ }).sort({ createdAt: -1 }).limit(10);
+        let highest = 1000;
+        for (const o of lastOrders) {
+          const m = o.orderNumber?.match(/^BC-(\d+)$/i);
+          if (m) {
+            const val = parseInt(m[1], 10);
+            if (!isNaN(val) && val > highest) highest = val;
+          }
+        }
+        for (const o of store.orders) {
+          const m = o.orderNumber?.match(/^BC-(\d+)$/i);
+          if (m) {
+            const val = parseInt(m[1], 10);
+            if (!isNaN(val) && val > highest) highest = val;
+          }
+        }
+        orderNumber = `BC-${highest + 1}`;
+      } catch (err) {
+        console.warn('[Order] Could not fetch latest MongoDB order number, using generator:', err);
+      }
+    }
+
+    const orderData = {
       orderNumber,
       user: req.user ? req.user.id : undefined,
       customerDetails: {
@@ -115,12 +215,12 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
       subtotal,
       deliveryFee,
       discount,
-      couponCode: couponCode ? couponCode.toUpperCase() : undefined,
+      couponCode: validatedCouponCode,
       total,
       paymentMethod,
-      paymentStatus: 'pending',
+      paymentStatus: 'pending' as const,
       deliveryType,
-      status: 'Pending',
+      status: 'Pending' as const,
       timeline: [
         {
           status: 'Order Placed',
@@ -129,19 +229,55 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
         }
       ],
       notes: notes || '',
+      whatsappOpened: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
 
-    store.orders.unshift(newOrder);
+    let savedMongoOrder: any = null;
+    if (isMongoConnected) {
+      try {
+        // Map items to valid MongoDB format
+        const mongoItems = validatedItems.map(i => ({
+          ...i,
+          product: mongoose.isValidObjectId(i.product) ? new mongoose.Types.ObjectId(i.product) : new mongoose.Types.ObjectId()
+        }));
+
+        savedMongoOrder = await Order.create({
+          ...orderData,
+          user: req.user && mongoose.isValidObjectId(req.user.id) ? new mongoose.Types.ObjectId(req.user.id) : null,
+          items: mongoItems,
+          timeline: [
+            {
+              status: 'Order Placed',
+              timestamp: new Date(),
+              note: `Order received via ${paymentMethod === 'cash_on_delivery' ? 'Cash on Delivery' : 'Bank Transfer'}.`
+            }
+          ]
+        });
+      } catch (mongoErr: any) {
+        console.error('[Order] MongoDB Order.create error:', mongoErr);
+      }
+    }
+
+    const finalOrder: InMemoryOrder = {
+      _id: savedMongoOrder ? String(savedMongoOrder._id) : `ord-${Date.now()}`,
+      ...orderData
+    };
+
+    store.orders.unshift(finalOrder);
 
     res.status(201).json({
       success: true,
       message: 'Thank you! Your order has been placed successfully.',
-      order: newOrder
+      order: finalOrder
     });
   } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('[Order Error]', error);
+    res.status(500).json({
+      success: false,
+      message: "Sorry, we couldn't place your order. Please try again."
+    });
   }
 };
 
@@ -152,6 +288,25 @@ export const getMyOrders = async (req: AuthRequest, res: Response): Promise<void
     if (!req.user) {
       res.status(401).json({ success: false, message: 'Not authorized.' });
       return;
+    }
+
+    const isMongoConnected = mongoose.connection.readyState === 1;
+    if (isMongoConnected && mongoose.isValidObjectId(req.user.id)) {
+      const mongoOrders = await Order.find({
+        $or: [
+          { user: req.user.id },
+          { 'customerDetails.email': req.user.email?.toLowerCase() }
+        ]
+      }).sort({ createdAt: -1 });
+
+      if (mongoOrders.length > 0) {
+        res.status(200).json({
+          success: true,
+          count: mongoOrders.length,
+          orders: mongoOrders
+        });
+        return;
+      }
     }
 
     const userOrders = store.orders.filter(
@@ -173,8 +328,18 @@ export const getMyOrders = async (req: AuthRequest, res: Response): Promise<void
 export const getOrderByNumber = async (req: Request, res: Response): Promise<void> => {
   try {
     const { orderNumber } = req.params;
-    const order = store.orders.find(o => o.orderNumber.toUpperCase() === orderNumber.toUpperCase().trim());
+    const cleanNum = orderNumber.toUpperCase().trim();
 
+    const isMongoConnected = mongoose.connection.readyState === 1;
+    if (isMongoConnected) {
+      const mongoOrder = await Order.findOne({ orderNumber: cleanNum });
+      if (mongoOrder) {
+        res.status(200).json({ success: true, order: mongoOrder });
+        return;
+      }
+    }
+
+    const order = store.orders.find(o => o.orderNumber.toUpperCase() === cleanNum);
     if (!order) {
       res.status(404).json({ success: false, message: 'No order found with this Order Number.' });
       return;
@@ -189,12 +354,32 @@ export const getOrderByNumber = async (req: Request, res: Response): Promise<voi
   }
 };
 
-// @desc    Get single order by ID
+// @desc    Get single order by ID or Order Number
 // @route   GET /api/orders/:id
 export const getOrderById = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const order = store.orders.find(o => o._id === id || o.orderNumber === id);
+    const cleanId = id.trim();
+
+    const isMongoConnected = mongoose.connection.readyState === 1;
+    if (isMongoConnected) {
+      const isObjectId = mongoose.isValidObjectId(cleanId);
+      const mongoOrder = await Order.findOne({
+        $or: [
+          ...(isObjectId ? [{ _id: cleanId }] : []),
+          { orderNumber: cleanId.toUpperCase() }
+        ]
+      });
+
+      if (mongoOrder) {
+        res.status(200).json({ success: true, order: mongoOrder });
+        return;
+      }
+    }
+
+    const order = store.orders.find(
+      o => o._id === cleanId || o.orderNumber.toUpperCase() === cleanId.toUpperCase()
+    );
 
     if (!order) {
       res.status(404).json({ success: false, message: 'Order not found.' });
@@ -205,6 +390,40 @@ export const getOrderById = async (req: Request, res: Response): Promise<void> =
       success: true,
       order
     });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Mark WhatsApp opened for an order
+// @route   PUT /api/orders/:id/whatsapp-opened
+export const markWhatsAppOpened = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const cleanId = id.trim();
+
+    const isMongoConnected = mongoose.connection.readyState === 1;
+    if (isMongoConnected) {
+      const isObjectId = mongoose.isValidObjectId(cleanId);
+      await Order.findOneAndUpdate(
+        {
+          $or: [
+            ...(isObjectId ? [{ _id: cleanId }] : []),
+            { orderNumber: cleanId.toUpperCase() }
+          ]
+        },
+        { whatsappOpened: true }
+      );
+    }
+
+    const order = store.orders.find(
+      o => o._id === cleanId || o.orderNumber.toUpperCase() === cleanId.toUpperCase()
+    );
+    if (order) {
+      order.whatsappOpened = true;
+    }
+
+    res.status(200).json({ success: true, message: 'WhatsApp click recorded.' });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -256,7 +475,38 @@ export const updateOrderStatusAdmin = async (req: Request, res: Response): Promi
     const { id } = req.params;
     const { status, note, paymentStatus } = req.body;
 
-    const orderIndex = store.orders.findIndex(o => o._id === id || o.orderNumber === id);
+    const isMongoConnected = mongoose.connection.readyState === 1;
+    if (isMongoConnected) {
+      const isObjectId = mongoose.isValidObjectId(id);
+      const updateData: any = {};
+      if (status) updateData.status = status;
+      if (paymentStatus) updateData.paymentStatus = paymentStatus;
+
+      await Order.findOneAndUpdate(
+        {
+          $or: [
+            ...(isObjectId ? [{ _id: id }] : []),
+            { orderNumber: id.toUpperCase() }
+          ]
+        },
+        {
+          ...updateData,
+          ...(status ? {
+            $push: {
+              timeline: {
+                status,
+                timestamp: new Date(),
+                note: note || `Status updated to ${status} by admin.`
+              }
+            }
+          } : {})
+        }
+      );
+    }
+
+    const orderIndex = store.orders.findIndex(
+      o => o._id === id || o.orderNumber.toUpperCase() === id.toUpperCase()
+    );
     if (orderIndex === -1) {
       res.status(404).json({ success: false, message: 'Order not found.' });
       return;
