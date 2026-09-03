@@ -119,6 +119,8 @@ export interface InMemoryOrder {
   }>;
   notes?: string;
   whatsappOpened?: boolean;
+  whatsappMessage?: string;
+  whatsappUrl?: string;
   createdAt: string;
   updatedAt: string;
 }

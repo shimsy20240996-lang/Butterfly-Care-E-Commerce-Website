@@ -45,6 +45,8 @@ export interface IOrder extends Document {
   timeline: IOrderTimeline[];
   notes?: string;
   whatsappOpened?: boolean;
+  whatsappMessage?: string;
+  whatsappUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -110,7 +112,9 @@ const OrderSchema = new Schema<IOrder>(
     },
     timeline: [TimelineSchema],
     notes: { type: String, default: '' },
-    whatsappOpened: { type: Boolean, default: false }
+    whatsappOpened: { type: Boolean, default: false },
+    whatsappMessage: { type: String, default: '' },
+    whatsappUrl: { type: String, default: '' }
   },
   { timestamps: true }
 );

@@ -157,6 +157,8 @@ export interface Order {
   timeline: OrderTimeline[];
   notes?: string;
   whatsappOpened?: boolean;
+  whatsappMessage?: string;
+  whatsappUrl?: string;
   createdAt: string;
   updatedAt: string;
 }

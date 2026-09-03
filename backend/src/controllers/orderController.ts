@@ -5,6 +5,7 @@ import { AuthRequest } from '../middleware/auth';
 import { Order } from '../models/Order';
 import { Product } from '../models/Product';
 import { Coupon } from '../models/Coupon';
+import { generateWhatsAppOrderMessage } from '../utils/whatsapp';
 
 // @desc    Create new customer order (Supports Guest & Logged-in user)
 // @route   POST /api/orders
@@ -20,20 +21,20 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
       notes
     } = req.body;
 
-    // 1. Validate Customer Details
-    if (!customerDetails || !customerDetails.fullName?.trim() || !customerDetails.phone?.trim()) {
-      res.status(400).json({ success: false, message: 'Please provide customer name and WhatsApp phone number.' });
-      return;
-    }
-
-    // 2. Validate Delivery Address
+    // 1. Validate Customer Details & Delivery Address (Never allow empty or default dummy records)
     if (
+      !customerDetails ||
+      !customerDetails.fullName?.trim() ||
+      !customerDetails.phone?.trim() ||
       !deliveryAddress ||
       !deliveryAddress.addressLine?.trim() ||
       !deliveryAddress.city?.trim() ||
       !deliveryAddress.district?.trim()
     ) {
-      res.status(400).json({ success: false, message: 'Please provide complete delivery address and district.' });
+      res.status(400).json({
+        success: false,
+        message: 'Please complete all required delivery details.'
+      });
       return;
     }
 
@@ -197,6 +198,8 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
       }
     }
 
+    const createdAtIso = new Date().toISOString();
+
     const orderData = {
       orderNumber,
       user: req.user ? req.user.id : undefined,
@@ -224,15 +227,22 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
       timeline: [
         {
           status: 'Order Placed',
-          timestamp: new Date().toISOString(),
+          timestamp: createdAtIso,
           note: `Order received via ${paymentMethod === 'cash_on_delivery' ? 'Cash on Delivery' : 'Bank Transfer'}.`
         }
       ],
       notes: notes || '',
       whatsappOpened: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      whatsappMessage: '',
+      whatsappUrl: '',
+      createdAt: createdAtIso,
+      updatedAt: createdAtIso
     };
+
+    // Generate authoritative WhatsApp message and Click-to-Chat URL from this exact order snapshot
+    const { rawMessage, whatsappUrl } = generateWhatsAppOrderMessage(orderData);
+    orderData.whatsappMessage = rawMessage;
+    orderData.whatsappUrl = whatsappUrl;
 
     let savedMongoOrder: any = null;
     if (isMongoConnected) {
@@ -270,7 +280,9 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
     res.status(201).json({
       success: true,
       message: 'Thank you! Your order has been placed successfully.',
-      order: finalOrder
+      order: finalOrder,
+      whatsappUrl: finalOrder.whatsappUrl,
+      whatsappMessage: finalOrder.whatsappMessage
     });
   } catch (error: any) {
     console.error('[Order Error]', error);

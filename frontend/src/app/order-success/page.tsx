@@ -46,7 +46,7 @@ function OrderSuccessContent() {
         setLoading(true);
 
         // 1. First check local storage for instant rendering
-        const cachedOrderJson = localStorage.getItem('butterfly_last_order');
+        const cachedOrderJson = typeof window !== 'undefined' ? localStorage.getItem('butterfly_last_order') : null;
         let parsedCached: Order | null = null;
         if (cachedOrderJson) {
           try {
@@ -59,7 +59,7 @@ function OrderSuccessContent() {
           }
         }
 
-        // 2. Fetch fresh order from backend if orderId is present
+        // 2. Fetch fresh order snapshot from backend if search ID is available
         const searchId = paramOrderId || parsedCached?.orderNumber || parsedCached?._id;
         if (searchId) {
           try {
@@ -68,28 +68,28 @@ function OrderSuccessContent() {
             );
             if (active && res && res.order) {
               setOrder(res.order);
-              localStorage.setItem('butterfly_last_order', JSON.stringify(res.order));
+              if (typeof window !== 'undefined') {
+                localStorage.setItem('butterfly_last_order', JSON.stringify(res.order));
+              }
             }
           } catch (fetchErr) {
-            // Try by ID fallback
             try {
               const resById = await api.get<{ success: boolean; order: Order }>(
                 `/orders/${encodeURIComponent(searchId)}`
               );
               if (active && resById && resById.order) {
                 setOrder(resById.order);
-                localStorage.setItem('butterfly_last_order', JSON.stringify(resById.order));
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem('butterfly_last_order', JSON.stringify(resById.order));
+                }
               }
             } catch (err2) {
-              console.warn('[OrderSuccess] Could not re-fetch from API, using cached order.');
+              console.warn('[OrderSuccess] Using local order snapshot.');
             }
           }
         }
       } catch (err: any) {
         console.error('[OrderSuccess Error]', err);
-        setErrorMessage(
-          'Your order was saved successfully. Please copy the order details and contact us on WhatsApp.'
-        );
       } finally {
         if (active) setLoading(false);
       }
@@ -102,42 +102,55 @@ function OrderSuccessContent() {
     };
   }, [paramOrderId]);
 
-  // Fallback synthetic order if neither DB nor cache is accessible
-  const displayOrder: Order = order || {
-    _id: 'ord-temp',
-    orderNumber: paramOrderId || 'BC-1025',
-    customerDetails: {
-      fullName: 'Valued Customer',
-      email: '',
-      phone: ''
-    },
-    deliveryAddress: {
-      addressLine: 'Delivery Address Provided',
-      city: 'Colombo',
-      district: 'Colombo'
-    },
-    items: [],
-    subtotal: 0,
-    deliveryFee: 0,
-    discount: 0,
-    total: 0,
-    paymentMethod: 'cash_on_delivery',
-    paymentStatus: 'pending',
-    deliveryType: 'standard',
-    status: 'Pending',
-    timeline: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+  if (loading && !order) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center bg-[#FFFDFB]">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-2 border-[#8EC5E8] border-t-[#4F7FA0] rounded-full animate-spin mx-auto" />
+          <p className="text-xs font-semibold text-[#7A7A7A]">Loading your order confirmation...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!order) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center bg-[#FFFDFB] px-4 py-16">
+        <div className="max-w-md w-full text-center bg-white rounded-3xl p-8 sm:p-10 border border-[#EFEAE6] shadow-card space-y-4">
+          <div className="w-16 h-16 rounded-full bg-[#E5F4FC] flex items-center justify-center mx-auto text-2xl text-[#4F7FA0]">
+            🦋
+          </div>
+          <h2 className="font-serif text-2xl font-bold text-[#454545]">Order Placed</h2>
+          <p className="text-xs text-[#7A7A7A]">
+            Thank you for shopping with Butterfly Care. If you recently completed checkout, your order is being processed.
+          </p>
+          <div className="pt-2 flex flex-col gap-2">
+            <Link
+              href="/orders"
+              className="w-full py-3.5 rounded-xl bg-[#4F7FA0] hover:bg-[#3D6783] text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-soft"
+            >
+              VIEW MY ORDERS
+            </Link>
+            <Link
+              href="/products"
+              className="w-full py-3.5 rounded-xl bg-[#FFFDFB] hover:bg-[#E5F4FC] text-[#4F7FA0] border border-[#8EC5E8]/60 text-xs font-bold uppercase tracking-wider transition-colors"
+            >
+              EXPLORE PRODUCTS
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleSendToWhatsApp = () => {
     try {
-      const url = getWhatsAppOrderUrl(displayOrder);
+      const url = order.whatsappUrl || getWhatsAppOrderUrl(order);
 
       // Asynchronously record that WhatsApp was clicked
-      const orderIdentifier = displayOrder._id || displayOrder.orderNumber;
+      const orderIdentifier = order._id || order.orderNumber;
       if (orderIdentifier) {
-        api.put(`/orders/${orderIdentifier}/whatsapp-opened`, {}).catch(() => {});
+        api.put(`/orders/${encodeURIComponent(orderIdentifier)}/whatsapp-opened`, {}).catch(() => {});
       }
 
       // Open in a new tab/window (compatible with Mobile WhatsApp app & WhatsApp Web)
@@ -153,7 +166,7 @@ function OrderSuccessContent() {
 
   const handleCopyOrderDetails = async () => {
     try {
-      const msg = formatWhatsAppOrderMessage(displayOrder);
+      const msg = order.whatsappMessage || formatWhatsAppOrderMessage(order);
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(msg);
       } else {
@@ -183,7 +196,7 @@ function OrderSuccessContent() {
         {/* Main Success Card */}
         <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#EFEAE6] shadow-card text-center space-y-6">
           {/* 🦋 Butterfly Icon */}
-          <div className="w-20 h-20 rounded-full bg-[#E5F4FC] border-2 border-[#8EC5E8]/40 flex items-center justify-center mx-auto text-4xl shadow-soft animate-bounce-short">
+          <div className="w-20 h-20 rounded-full bg-[#E5F4FC] border-2 border-[#8EC5E8]/40 flex items-center justify-center mx-auto text-4xl shadow-soft">
             🦋
           </div>
 
@@ -206,7 +219,7 @@ function OrderSuccessContent() {
               Your Order ID
             </span>
             <p className="font-mono text-2xl sm:text-3xl font-extrabold text-[#4F7FA0] tracking-wider">
-              {displayOrder.orderNumber}
+              {order.orderNumber}
             </p>
             <p className="text-[11px] text-emerald-600 font-medium flex items-center justify-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -285,7 +298,7 @@ function OrderSuccessContent() {
             <div className="flex items-center gap-2">
               <ShoppingBag className="w-4 h-4 text-[#4F7FA0]" />
               <span className="font-serif text-sm font-bold text-[#454545]">
-                Order Details Summary ({displayOrder.items?.length || 0} Items)
+                Order Details Summary ({order.items?.length || 0} Items)
               </span>
             </div>
             {showDetails ? (
@@ -301,24 +314,24 @@ function OrderSuccessContent() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-2xl bg-[#FFFDFB] border border-[#EFEAE6]">
                 <div>
                   <p className="font-bold text-[#454545]">Customer:</p>
-                  <p className="text-[#7A7A7A]">{displayOrder.customerDetails?.fullName}</p>
-                  <p className="text-[#7A7A7A] font-mono">{displayOrder.customerDetails?.phone}</p>
+                  <p className="text-[#7A7A7A]">{order.customerDetails?.fullName}</p>
+                  <p className="text-[#7A7A7A] font-mono">{order.customerDetails?.phone}</p>
                 </div>
                 <div>
                   <p className="font-bold text-[#454545]">Delivery Address:</p>
-                  <p className="text-[#7A7A7A]">{displayOrder.deliveryAddress?.addressLine}</p>
+                  <p className="text-[#7A7A7A]">{order.deliveryAddress?.addressLine}</p>
                   <p className="text-[#7A7A7A]">
-                    {displayOrder.deliveryAddress?.city}, {displayOrder.deliveryAddress?.district}
+                    {order.deliveryAddress?.city}, {order.deliveryAddress?.district}
                   </p>
                 </div>
               </div>
 
               {/* Items List */}
-              {displayOrder.items && displayOrder.items.length > 0 && (
+              {order.items && order.items.length > 0 && (
                 <div className="space-y-2">
                   <p className="font-bold text-[#454545]">Purchased Items:</p>
                   <div className="divide-y divide-[#EFEAE6] border border-[#EFEAE6] rounded-2xl p-3">
-                    {displayOrder.items.map((item, idx) => (
+                    {order.items.map((item, idx) => (
                       <div key={idx} className="py-2 flex items-center justify-between gap-3">
                         <div className="flex items-center gap-2.5 min-w-0">
                           {item.image && (
@@ -348,23 +361,23 @@ function OrderSuccessContent() {
               <div className="space-y-1.5 pt-2 border-t border-[#EFEAE6]">
                 <div className="flex justify-between text-[#7A7A7A]">
                   <span>Subtotal</span>
-                  <span>{formatLKR(displayOrder.subtotal)}</span>
+                  <span>{formatLKR(order.subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-[#7A7A7A]">
                   <span>Delivery Fee</span>
-                  <span>{displayOrder.deliveryFee === 0 ? 'FREE' : formatLKR(displayOrder.deliveryFee)}</span>
+                  <span>{order.deliveryFee === 0 ? 'FREE' : formatLKR(order.deliveryFee)}</span>
                 </div>
                 <div className="flex justify-between text-sm font-bold text-[#454545] pt-2 border-t border-[#EFEAE6]">
                   <span>Total Amount</span>
-                  <span className="text-[#4F7FA0]">{formatLKR(displayOrder.total)}</span>
+                  <span className="text-[#4F7FA0]">{formatLKR(order.total)}</span>
                 </div>
                 <div className="flex justify-between text-[11px] text-[#7A7A7A]">
                   <span>Payment Method</span>
-                  <span>{formatPaymentMethod(displayOrder.paymentMethod)}</span>
+                  <span>{formatPaymentMethod(order.paymentMethod)}</span>
                 </div>
                 <div className="flex justify-between text-[11px] text-[#7A7A7A]">
                   <span>Order Date</span>
-                  <span>{formatOrderDate(displayOrder.createdAt)}</span>
+                  <span>{formatOrderDate(order.createdAt)}</span>
                 </div>
               </div>
             </div>

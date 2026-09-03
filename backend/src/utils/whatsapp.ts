@@ -1,9 +1,7 @@
-import { Order } from '../types';
-
 export const DEFAULT_WHATSAPP_NUMBER = '94740225855';
 
 export function getWhatsAppNumber(): string {
-  const envNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || DEFAULT_WHATSAPP_NUMBER;
+  const envNumber = process.env.WHATSAPP_NUMBER || DEFAULT_WHATSAPP_NUMBER;
   return envNumber.replace(/[^0-9]/g, '') || DEFAULT_WHATSAPP_NUMBER;
 }
 
@@ -56,10 +54,34 @@ export function formatPaymentMethod(method?: string): string {
   }
 }
 
-/**
- * Dynamically formats the complete WhatsApp order message from the authoritative Order snapshot.
- */
-export function formatWhatsAppOrderMessage(order: Order): string {
+export interface OrderWhatsAppInput {
+  orderNumber: string;
+  customerDetails?: {
+    fullName?: string;
+    phone?: string;
+    email?: string;
+  };
+  deliveryAddress?: {
+    addressLine?: string;
+    city?: string;
+    district?: string;
+    postalCode?: string;
+  };
+  items?: Array<{
+    name: string;
+    quantity: number;
+    price: number;
+    selectedSize?: string;
+    selectedColor?: string;
+  }>;
+  subtotal: number;
+  deliveryFee: number;
+  total: number;
+  paymentMethod?: string;
+  createdAt?: string | Date;
+}
+
+export function generateWhatsAppOrderMessage(order: OrderWhatsAppInput): { rawMessage: string; whatsappUrl: string } {
   const customerName = order.customerDetails?.fullName?.trim() || '';
   const customerPhone = order.customerDetails?.phone?.trim() || '';
 
@@ -90,7 +112,7 @@ export function formatWhatsAppOrderMessage(order: Order): string {
   const paymentMethodText = formatPaymentMethod(order.paymentMethod);
   const orderDateText = formatOrderDate(order.createdAt);
 
-  return `🦋 BUTTERFLY CARE - NEW ORDER
+  const rawMessage = `🦋 BUTTERFLY CARE - NEW ORDER
 
 Order ID: ${order.orderNumber}
 
@@ -124,17 +146,10 @@ ${orderDateText}
 
 🦋 BUTTERFLY CARE
 for every mom`;
-}
 
-/**
- * Generates the WhatsApp Click-to-Chat URL
- */
-export function getWhatsAppOrderUrl(order: Order, customNumber?: string): string {
-  if (order.whatsappUrl && !customNumber) {
-    return order.whatsappUrl;
-  }
-  const whatsappNumber = customNumber || getWhatsAppNumber();
-  const rawMessage = order.whatsappMessage || formatWhatsAppOrderMessage(order);
+  const whatsappNumber = getWhatsAppNumber();
   const encodedMessage = encodeURIComponent(rawMessage);
-  return `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+
+  return { rawMessage, whatsappUrl };
 }

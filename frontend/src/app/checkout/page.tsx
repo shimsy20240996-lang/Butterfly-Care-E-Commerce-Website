@@ -77,8 +77,14 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!fullName.trim() || !phone.trim() || !addressLine.trim() || !city.trim()) {
-      showToast('Please fill in all required shipping details.', 'error');
+    if (
+      !fullName.trim() ||
+      !phone.trim() ||
+      !addressLine.trim() ||
+      !city.trim() ||
+      !district.trim()
+    ) {
+      showToast('Please complete all required delivery details.', 'error');
       return;
     }
 
@@ -89,7 +95,7 @@ export default function CheckoutPage() {
         customerDetails: {
           fullName: fullName.trim(),
           phone: phone.trim(),
-          email: user?.email || ''
+          email: user?.email ? user.email.trim() : ''
         },
         deliveryAddress: {
           addressLine: addressLine.trim(),
@@ -112,25 +118,34 @@ export default function CheckoutPage() {
         deliveryType: 'standard'
       };
 
-      const res = await api.post<{ success: boolean; order: Order; message?: string }>(
-        '/orders',
-        orderPayload
-      );
+      const res = await api.post<{
+        success: boolean;
+        order: Order;
+        whatsappUrl?: string;
+        whatsappMessage?: string;
+        message?: string;
+      }>('/orders', orderPayload);
 
       if (!res || !res.success || !res.order) {
         throw new Error(res?.message || "Sorry, we couldn't place your order. Please try again.");
       }
 
-      const createdOrder = res.order;
+      const createdOrder: Order = {
+        ...res.order,
+        whatsappUrl: res.whatsappUrl || res.order.whatsappUrl,
+        whatsappMessage: res.whatsappMessage || res.order.whatsappMessage
+      };
 
-      // Save to localStorage for quick retrieval & offline safety
-      localStorage.setItem('butterfly_last_order', JSON.stringify(createdOrder));
+      // Save authoritative order snapshot to localStorage for instant rendering on Order Success
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('butterfly_last_order', JSON.stringify(createdOrder));
+      }
 
       // Clear the cart only after successful order creation
       clearCart();
 
       showToast('Order placed successfully! 🦋');
-      router.push(`/order-success?orderId=${createdOrder.orderNumber || createdOrder._id}`);
+      router.push(`/order-success?orderId=${encodeURIComponent(createdOrder.orderNumber || createdOrder._id)}`);
     } catch (err: any) {
       console.error('Order creation error:', err);
       showToast(err.message || "Sorry, we couldn't place your order. Please try again.", 'error');
