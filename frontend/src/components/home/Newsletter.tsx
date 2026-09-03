@@ -17,7 +17,7 @@ export const Newsletter: React.FC = () => {
     }
 
     setIsSubscribed(true);
-    showToast('Welcome to the Butterfly Care family! Check your inbox for your 10% welcome coupon.');
+    showToast('Welcome to the Butterfly family! Check your inbox for your 10% welcome coupon.');
     setEmail('');
   };
 
@@ -31,7 +31,7 @@ export const Newsletter: React.FC = () => {
           </div>
 
           <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-butterfly-text">
-            Join the BUTTERFLY CARE Family
+            Join the BUTTERFLY Family
           </h2>
 
           <p className="text-xs sm:text-sm text-butterfly-textMuted max-w-lg mx-auto leading-relaxed">

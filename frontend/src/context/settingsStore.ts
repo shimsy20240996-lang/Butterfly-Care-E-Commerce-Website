@@ -10,8 +10,8 @@ interface SettingsState {
 }
 
 const defaultSettings: StoreSettings = {
-  storeName: 'BUTTERFLY CARE',
-  tagline: 'for every mom',
+  storeName: 'BUTTERFLY',
+  tagline: 'care for every mom',
   announcementText: 'Thoughtfully chosen for moms & little ones • Islandwide Delivery Available',
   whatsappNumber: '+94 74 022 5855',
   contactEmail: 'care@butterflycare.lk',
@@ -34,7 +34,7 @@ const defaultSettings: StoreSettings = {
   bankDetails: {
     bankName: 'Commercial Bank of Ceylon',
     branch: 'Colombo 07 Branch',
-    accountName: 'Butterfly Care (Pvt) Ltd',
+    accountName: 'Butterfly (Pvt) Ltd',
     accountNumber: '1000 4589 3210',
     instructions: 'Please deposit the order total to the account above and WhatsApp the deposit slip with your Order Number to +94 74 022 5855.'
   },

@@ -43,7 +43,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     res.status(201).json({
       success: true,
-      message: 'Account created successfully! Welcome to Butterfly Care.',
+      message: 'Account created successfully! Welcome to Butterfly.',
       token,
       user: {
         id: newUser._id,

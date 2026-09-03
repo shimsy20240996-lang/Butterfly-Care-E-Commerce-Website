@@ -276,7 +276,7 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
       images: Array.isArray(images) && images.length > 0 ? images : ['https://images.unsplash.com/photo-1555252333-9f8e92e65df9?q=80&w=1000&auto=format&fit=crop'],
       stock: stock !== undefined ? Number(stock) : 10,
       sku: (sku || `BC-${Date.now().toString().slice(-6)}`).toUpperCase().trim(),
-      brand: brand || 'Butterfly Care',
+      brand: brand || 'Butterfly',
       ageGroup: ageGroup || 'All Ages',
       sizes: Array.isArray(sizes) ? sizes : [],
       colors: Array.isArray(colors) ? colors : [],

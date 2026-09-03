@@ -19,7 +19,7 @@ export default function OurStoryPage() {
             Care That Begins With Mom
           </h1>
           <p className="text-sm sm:text-base text-butterfly-textMuted leading-relaxed">
-            At BUTTERFLY CARE, we believe that when a mother is nurtured and supported, her whole family thrives.
+            At BUTTERFLY, we believe that when a mother is nurtured and supported, her whole family thrives.
             We exist to make shopping for mothers and little ones easier, more thoughtful, and profoundly joyful.
           </p>
         </div>
@@ -113,7 +113,7 @@ export default function OurStoryPage() {
         {/* Bottom Editorial Callout */}
         <div className="text-center max-w-xl mx-auto space-y-6 pt-4">
           <h3 className="font-serif text-2xl font-bold text-butterfly-text">
-            Experience the Comfort of Butterfly Care
+            Experience the Comfort of Butterfly
           </h3>
           <p className="text-xs sm:text-sm text-butterfly-textMuted leading-relaxed">
             Join thousands of happy Sri Lankan families who have chosen our thoughtfully curated collections.

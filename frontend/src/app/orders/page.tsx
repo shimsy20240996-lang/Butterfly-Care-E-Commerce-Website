@@ -78,7 +78,7 @@ export default function OrdersPage() {
             My Orders
           </h1>
           <p className="text-xs sm:text-sm text-[#7A7A7A]">
-            Track and view your recent Butterfly Care purchases.
+            Track and view your recent BUTTERFLY purchases.
           </p>
         </div>
 

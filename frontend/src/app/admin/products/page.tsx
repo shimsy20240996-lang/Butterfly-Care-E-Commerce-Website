@@ -42,7 +42,7 @@ export default function AdminProductsPage() {
   const [price, setPrice] = useState<number | string>('');
   const [discountPrice, setDiscountPrice] = useState<number | string>('');
   const [stock, setStock] = useState<number | string>(10);
-  const [brand, setBrand] = useState('Butterfly Care');
+  const [brand, setBrand] = useState('Butterfly');
   const [ageGroup, setAgeGroup] = useState('0-36 months');
   const [shortDescription, setShortDescription] = useState('');
   const [description, setDescription] = useState('');
@@ -92,7 +92,7 @@ export default function AdminProductsPage() {
     setPrice('');
     setDiscountPrice('');
     setStock(15);
-    setBrand('Butterfly Care Pure');
+    setBrand('Butterfly Pure');
     setAgeGroup('0-36 months');
     setGender('unisex');
     setSale(false);
@@ -226,7 +226,7 @@ export default function AdminProductsPage() {
               Product Management
             </h1>
             <p className="text-xs text-butterfly-textMuted mt-1">
-              Add, edit, restock, and manage all mother & baby care items in Butterfly Care catalog.
+              Add, edit, restock, and manage all mother & baby care items in BUTTERFLY catalog.
             </p>
           </div>
 

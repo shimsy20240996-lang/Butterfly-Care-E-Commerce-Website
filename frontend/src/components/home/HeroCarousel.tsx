@@ -13,7 +13,7 @@ const HERO_SLIDES = [
     subtitle: '💙 Baby Boy • 🩷 Baby Girl • 🤍 Mom & Family',
     title: 'Everything Little. Everything Loved.',
     description:
-      'Thoughtfully chosen essentials for every mom and every little one. Pure organic comfort, hypoallergenic care, and islandwide delivery.',
+      'Thoughtfully chosen essentials — care for every mom and every little one. Pure organic comfort, hypoallergenic care, and islandwide delivery.',
     primaryBtn: { text: 'SHOP ALL PRODUCTS', href: '/products' },
     secondaryBtn: { text: 'SHOP MOM CARE', href: '/products?tab=mom' }
   },

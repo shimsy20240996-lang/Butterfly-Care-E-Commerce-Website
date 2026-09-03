@@ -44,8 +44,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({
     status: 'online',
-    brand: 'BUTTERFLY CARE',
-    tagline: 'for every mom',
+    brand: 'BUTTERFLY',
+    tagline: 'care for every mom',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     storeStats: {
@@ -77,7 +77,7 @@ const startServer = async () => {
   await connectDB();
 
   app.listen(PORT, () => {
-    console.log(`🌸 BUTTERFLY CARE API Server running on port ${PORT}`);
+    console.log(`🌸 BUTTERFLY API Server running on port ${PORT}`);
     console.log(`🔗 Health Check: http://localhost:${PORT}/api/health`);
     console.log(`✨ Ready to care for every mom & baby.`);
   });

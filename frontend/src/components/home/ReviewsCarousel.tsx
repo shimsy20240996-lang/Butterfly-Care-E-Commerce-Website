@@ -19,7 +19,7 @@ const REVIEWS_DATA = [
     rating: 5,
     title: 'Must-have for every expecting mother',
     comment:
-      'Used the Butterfly Care belly oil throughout my entire second pregnancy and not a single new stretch mark appeared. Smells like a luxury spa and absorbs effortlessly without staining clothes.',
+      'Used the Butterfly belly oil throughout my entire second pregnancy and not a single new stretch mark appeared. Smells like a luxury spa and absorbs effortlessly without staining clothes.',
     date: 'August 2026'
   },
   {
@@ -66,7 +66,7 @@ export const ReviewsCarousel: React.FC = () => {
               Loved by Moms
             </h2>
             <p className="text-xs sm:text-sm text-butterfly-textMuted mt-1">
-              Read authentic feedback from loving parents who trust Butterfly Care.
+              Read authentic feedback from loving parents who trust BUTTERFLY.
             </p>
           </div>
 

@@ -162,7 +162,7 @@ export default function CheckoutPage() {
             Checkout
           </h1>
           <p className="text-xs sm:text-sm text-[#7A7A7A]">
-            Safe, gentle, and reliable ordering for every mom.
+            Safe, gentle, and reliable ordering — care for every mom.
           </p>
         </div>
 
@@ -369,7 +369,7 @@ export default function CheckoutPage() {
 
               <p className="text-[11px] text-center text-[#7A7A7A] flex items-center justify-center gap-1.5 pt-1">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>100% Safe & Secure Butterfly Care Ordering</span>
+                <span>100% Safe & Secure BUTTERFLY Ordering</span>
               </p>
             </div>
           </div>

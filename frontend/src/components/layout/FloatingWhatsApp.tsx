@@ -19,7 +19,7 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({
   const phone = settings.whatsappNumber || '+94 74 022 5855';
   const message =
     customMessage ||
-    'Hello Butterfly Care! I would love some assistance with baby and mom care products.';
+    'Hello BUTTERFLY! I would love some assistance with baby and mom care products.';
 
   const whatsappUrl = generateWhatsAppLink(phone, message);
 
@@ -28,7 +28,7 @@ export const FloatingWhatsApp: React.FC<FloatingWhatsAppProps> = ({
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Chat with Butterfly Care on WhatsApp"
+      aria-label="Chat with Butterfly on WhatsApp"
       className={`fixed bottom-6 left-6 z-40 flex items-center gap-2.5 px-4 py-3 bg-[#25D366] text-white rounded-full shadow-floating hover:bg-[#20bd5a] hover:scale-105 active:scale-95 transition-all duration-300 group ${className}`}
     >
       <MessageCircle className="w-5 h-5 fill-current shrink-0" />

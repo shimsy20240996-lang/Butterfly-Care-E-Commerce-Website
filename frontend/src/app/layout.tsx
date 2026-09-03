@@ -7,7 +7,7 @@ import { ToastContainer } from '@/components/ui/Toast';
 import { FloatingWhatsApp } from '@/components/layout/FloatingWhatsApp';
 
 export const metadata: Metadata = {
-  title: 'BUTTERFLY CARE — for every mom | Baby & Mother Care Products',
+  title: 'BUTTERFLY | care for every mom | Baby & Mother Care Products',
   description:
     'Care for every little moment. Discover thoughtfully chosen baby and mother care essentials in Sri Lanka with islandwide delivery.',
   keywords: [
@@ -19,18 +19,18 @@ export const metadata: Metadata = {
     'baby feeding bottles',
     'maternity essentials Colombo'
   ],
-  authors: [{ name: 'Butterfly Care' }],
+  authors: [{ name: 'Butterfly' }],
   openGraph: {
-    title: 'BUTTERFLY CARE — for every mom',
+    title: 'BUTTERFLY | care for every mom',
     description: 'Thoughtfully chosen essentials for every mom and every little one.',
     url: 'https://butterflycare.lk',
-    siteName: 'Butterfly Care',
+    siteName: 'Butterfly',
     images: [
       {
         url: 'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?q=80&w=1200&auto=format&fit=crop',
         width: 1200,
         height: 630,
-        alt: 'Butterfly Care - Mother & Baby Essentials'
+        alt: 'Butterfly - care for every mom'
       }
     ],
     locale: 'en_US',

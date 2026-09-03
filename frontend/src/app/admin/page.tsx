@@ -50,7 +50,7 @@ export default function AdminDashboardPage() {
           </div>
           <h2 className="font-serif text-2xl font-bold text-butterfly-text">Admin Access Required</h2>
           <p className="text-xs text-butterfly-textMuted">
-            You must be signed in with an administrator account to view the Butterfly Care management dashboard.
+            You must be signed in with an administrator account to view the BUTTERFLY management dashboard.
           </p>
           <Link
             href="/auth/login"
@@ -75,7 +75,7 @@ export default function AdminDashboardPage() {
               Store Overview & Analytics
             </h1>
             <p className="text-xs text-butterfly-textMuted mt-1">
-              Live store metrics, revenue performance, and inventory health for Butterfly Care.
+              Live store metrics, revenue performance, and inventory health for BUTTERFLY.
             </p>
           </div>
 

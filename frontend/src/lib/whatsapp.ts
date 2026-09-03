@@ -90,7 +90,7 @@ export function formatWhatsAppOrderMessage(order: Order): string {
   const paymentMethodText = formatPaymentMethod(order.paymentMethod);
   const orderDateText = formatOrderDate(order.createdAt);
 
-  return `🦋 BUTTERFLY CARE - NEW ORDER
+  return `🦋 BUTTERFLY - NEW ORDER
 
 Order ID: ${order.orderNumber}
 
@@ -122,8 +122,8 @@ ${paymentMethodText}
 
 ${orderDateText}
 
-🦋 BUTTERFLY CARE
-for every mom`;
+🦋 BUTTERFLY
+care for every mom`;
 }
 
 /**

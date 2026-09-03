@@ -22,7 +22,7 @@ export const MomCareSpotlight: React.FC<MomCareSpotlightProps> = ({ momProducts 
           <div className="lg:col-span-6 space-y-6">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E9E9E9] text-xs font-bold uppercase tracking-widest text-[#3F4650] shadow-xs">
               <Heart className="w-3.5 h-3.5 text-[#E8A6B8] fill-current" />
-              <span>For Every Mom</span>
+              <span>Care For Every Mom</span>
             </div>
 
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-[#3F4650] leading-[1.18]">

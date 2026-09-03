@@ -64,7 +64,7 @@ function TrackOrderContent() {
             Track Your Order
           </h1>
           <p className="text-xs sm:text-sm text-butterfly-textMuted">
-            Enter your Butterfly Care Order Number (e.g., BC-2026-00101) to view the current dispatch timeline.
+            Enter your BUTTERFLY Order Number (e.g., BC-1001) to view the current dispatch timeline.
           </p>
         </div>
 

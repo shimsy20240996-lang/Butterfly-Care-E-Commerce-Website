@@ -107,11 +107,11 @@ export default function HomePage() {
             <div className="lg:col-span-6 space-y-4 sm:space-y-6 text-center lg:text-left">
               <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white border border-[#EFEAE6] text-xs font-semibold text-[#454545] shadow-soft">
                 <Sparkles className="w-3.5 h-3.5 text-[#E8A6B8]" />
-                <span>for every mom</span>
+                <span>care for every mom</span>
               </div>
 
               <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-[#454545] leading-[1.15]">
-                BUTTERFLY CARE
+                BUTTERFLY
               </h1>
 
               <p className="text-base sm:text-lg text-[#7A7A7A] max-w-lg mx-auto lg:mx-0 font-normal">

@@ -51,7 +51,7 @@ const ProductSchema = new Schema<IProduct>(
     images: [{ type: String, required: true }],
     stock: { type: Number, required: true, min: 0, default: 10 },
     sku: { type: String, required: true, unique: true, uppercase: true, trim: true },
-    brand: { type: String, default: 'Butterfly Care' },
+    brand: { type: String, default: 'Butterfly' },
     ageGroup: { type: String, default: 'All Ages' },
     sizes: [{ type: String }],
     colors: [{ type: String }],

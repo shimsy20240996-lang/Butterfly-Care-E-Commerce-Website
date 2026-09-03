@@ -7,7 +7,7 @@ import { MessageCircle, Phone, Mail, MapPin } from 'lucide-react';
 import { generateWhatsAppLink } from '@/lib/utils';
 
 export const Footer: React.FC = () => {
-  const whatsappUrl = generateWhatsAppLink(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '94740225855', 'Hello BUTTERFLY CARE, I have an inquiry.');
+  const whatsappUrl = generateWhatsAppLink(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '94740225855', 'Hello BUTTERFLY, I have an inquiry.');
 
   return (
     <footer className="bg-white border-t border-[#EFEAE6] text-[#454545] pt-12 pb-8">
@@ -60,7 +60,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="pt-6 border-t border-[#EFEAE6] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#7A7A7A]">
-          <p>© {new Date().getFullYear()} BUTTERFLY CARE. All rights reserved. • for every mom</p>
+          <p>© {new Date().getFullYear()} BUTTERFLY. All rights reserved. • care for every mom</p>
           <div className="flex items-center gap-4">
             <Link href="/our-story" className="hover:underline">About</Link>
             <Link href="/contact" className="hover:underline">Contact</Link>

@@ -29,7 +29,7 @@ export default function ContactPage() {
   const whatsappNumber = settings.whatsappNumber || '+94 74 022 5855';
   const whatsappUrl = generateWhatsAppLink(
     whatsappNumber,
-    'Hello Butterfly Care! I would like some assistance with baby and mom care products.'
+    'Hello BUTTERFLY! I would like some assistance with baby and mom care products.'
   );
 
   return (

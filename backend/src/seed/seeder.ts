@@ -73,8 +73,8 @@ const seedDatabase = async () => {
 
     console.log('🌸 Seeding Settings...');
     await Setting.create({
-      storeName: 'BUTTERFLY CARE',
-      tagline: 'for every mom',
+      storeName: 'BUTTERFLY',
+      tagline: 'care for every mom',
       districtDeliveryFees: SRI_LANKAN_DISTRICTS
     });
 

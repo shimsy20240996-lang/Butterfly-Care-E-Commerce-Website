@@ -112,7 +112,7 @@ export function generateWhatsAppOrderMessage(order: OrderWhatsAppInput): { rawMe
   const paymentMethodText = formatPaymentMethod(order.paymentMethod);
   const orderDateText = formatOrderDate(order.createdAt);
 
-  const rawMessage = `🦋 BUTTERFLY CARE - NEW ORDER
+  const rawMessage = `🦋 BUTTERFLY - NEW ORDER
 
 Order ID: ${order.orderNumber}
 
@@ -144,8 +144,8 @@ ${paymentMethodText}
 
 ${orderDateText}
 
-🦋 BUTTERFLY CARE
-for every mom`;
+🦋 BUTTERFLY
+care for every mom`;
 
   const whatsappNumber = getWhatsAppNumber();
   const encodedMessage = encodeURIComponent(rawMessage);

@@ -43,8 +43,8 @@ export interface ISetting extends Document {
 
 const SettingSchema = new Schema<ISetting>(
   {
-    storeName: { type: String, default: 'BUTTERFLY CARE' },
-    tagline: { type: String, default: 'for every mom' },
+    storeName: { type: String, default: 'BUTTERFLY' },
+    tagline: { type: String, default: 'care for every mom' },
     announcementText: { 
       type: String, 
       default: 'Thoughtfully chosen for moms & little ones • Islandwide Delivery Available' 
@@ -67,7 +67,7 @@ const SettingSchema = new Schema<ISetting>(
     bankDetails: {
       bankName: { type: String, default: 'Commercial Bank of Ceylon' },
       branch: { type: String, default: 'Colombo 07 Branch' },
-      accountName: { type: String, default: 'Butterfly Care (Pvt) Ltd' },
+      accountName: { type: String, default: 'Butterfly (Pvt) Ltd' },
       accountNumber: { type: String, default: '1000 4589 3210' },
       instructions: { 
         type: String, 

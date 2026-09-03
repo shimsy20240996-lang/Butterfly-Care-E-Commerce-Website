@@ -122,7 +122,7 @@ function OrderSuccessContent() {
           </div>
           <h2 className="font-serif text-2xl font-bold text-[#454545]">Order Placed</h2>
           <p className="text-xs text-[#7A7A7A]">
-            Thank you for shopping with Butterfly Care. If you recently completed checkout, your order is being processed.
+            Thank you for shopping with BUTTERFLY. If you recently completed checkout, your order is being processed.
           </p>
           <div className="pt-2 flex flex-col gap-2">
             <Link
@@ -209,7 +209,7 @@ function OrderSuccessContent() {
               Order Placed Successfully!
             </h1>
             <p className="text-xs sm:text-sm text-[#7A7A7A] leading-relaxed max-w-sm mx-auto">
-              Thank you for shopping with <strong className="text-[#454545]">BUTTERFLY CARE</strong>.
+              Thank you for shopping with <strong className="text-[#454545]">BUTTERFLY</strong>.
             </p>
           </div>
 

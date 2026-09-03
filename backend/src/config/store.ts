@@ -197,8 +197,8 @@ class StoreService {
   public reviews: InMemoryReview[] = [];
   public coupons: InMemoryCoupon[] = [];
   public settings: InMemorySetting = {
-    storeName: 'BUTTERFLY CARE',
-    tagline: 'for every mom',
+    storeName: 'BUTTERFLY',
+    tagline: 'care for every mom',
     announcementText: 'Thoughtfully chosen for moms & little ones • Islandwide Delivery Available',
     whatsappNumber: '+94 74 022 5855',
     contactEmail: 'care@butterflycare.lk',
@@ -213,7 +213,7 @@ class StoreService {
     bankDetails: {
       bankName: 'Commercial Bank of Ceylon',
       branch: 'Colombo 07 Branch',
-      accountName: 'Butterfly Care (Pvt) Ltd',
+      accountName: 'Butterfly (Pvt) Ltd',
       accountNumber: '1000 4589 3210',
       instructions: 'Please deposit the order total to the account above and WhatsApp the deposit slip with your Order Number to +94 74 022 5855.'
     },
@@ -401,7 +401,7 @@ class StoreService {
         timeline: [
           { status: 'Order Placed', timestamp: '2026-08-25T10:00:00.000Z', note: 'Order placed by customer' },
           { status: 'Confirmed', timestamp: '2026-08-25T10:30:00.000Z', note: 'Order verified by store manager' },
-          { status: 'Processing', timestamp: '2026-08-25T14:00:00.000Z', note: 'Packed with Butterfly Care eco box' },
+          { status: 'Processing', timestamp: '2026-08-25T14:00:00.000Z', note: 'Packed with Butterfly eco box' },
           { status: 'Shipped', timestamp: '2026-08-26T09:00:00.000Z', note: 'Handed over to islandwide courier' },
           { status: 'Delivered', timestamp: '2026-08-27T15:30:00.000Z', note: 'Delivered and cash collected' }
         ],

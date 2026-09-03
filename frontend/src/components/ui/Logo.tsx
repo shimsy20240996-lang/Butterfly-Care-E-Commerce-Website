@@ -25,12 +25,12 @@ export const Logo: React.FC<LogoProps> = ({
     <Link
       href="/"
       className={`inline-flex items-center gap-2.5 group select-none transition-transform duration-200 hover:scale-[1.02] ${className}`}
-      aria-label="Butterfly Care - Home"
+      aria-label="Butterfly - Home"
     >
       <div className="relative shrink-0 flex items-center justify-center overflow-hidden rounded-xl">
         <Image
           src="/logo.jpeg"
-          alt="Butterfly Care - for every mom"
+          alt="Butterfly - care for every mom"
           width={imgWidth}
           height={imgHeight}
           className="object-contain h-9 sm:h-11 w-auto mix-blend-multiply"
@@ -40,15 +40,15 @@ export const Logo: React.FC<LogoProps> = ({
 
       <div className="flex flex-col text-left leading-tight">
         <span
-          className={`font-serif tracking-[0.08em] font-bold text-[#454545] ${
+          className={`font-serif tracking-[0.1em] font-bold text-[#454545] ${
             isSmall ? 'text-sm' : isLarge ? 'text-xl' : 'text-base sm:text-lg'
           }`}
         >
-          BUTTERFLY CARE
+          BUTTERFLY
         </span>
         {showTagline && (
           <span className="font-sans text-[10px] sm:text-[11px] font-medium text-[#7A7A7A] tracking-wider -mt-0.5">
-            for every mom
+            care for every mom
           </span>
         )}
       </div>

@@ -38,7 +38,7 @@ export default function RegisterPage() {
 
       if (data && data.token && data.user) {
         login(data.token, data.user);
-        showToast(data.message || 'Welcome to Butterfly Care!');
+        showToast(data.message || 'Welcome to Butterfly!');
         router.push('/account');
       }
     } catch (err: any) {
@@ -53,7 +53,7 @@ export default function RegisterPage() {
       <div className="max-w-md w-full bg-white rounded-3xl p-8 sm:p-10 border border-butterfly-border shadow-card space-y-6">
         <div className="text-center space-y-2">
           <Logo size="md" className="justify-center mb-2" />
-          <h1 className="font-serif text-2xl font-bold text-butterfly-text">Join Butterfly Care</h1>
+          <h1 className="font-serif text-2xl font-bold text-butterfly-text">Join BUTTERFLY</h1>
           <p className="text-xs text-butterfly-textMuted">
             Create an account to save your favorite baby essentials, track orders, and receive member perks.
           </p>
